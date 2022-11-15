@@ -4,6 +4,8 @@ export const useSession = () => {
   const account = useState<Account | null>("account", () => null);
   const status = ref<"Loading" | "LoggedIn" | "LoggedOut">("Loading");
   const refresh = async () => {
+    status.value === "Loading";
+
     const result = await $fetch("/api/session");
 
     if (result.type === "Err") {
@@ -21,6 +23,11 @@ export const useSession = () => {
     status.value = "LoggedIn";
     account.value = result.data;
   };
+
+  watch(status, () => {
+    console.log("USE_SESSION", status.value);
+  });
+
   return { account, status, refresh };
 };
 

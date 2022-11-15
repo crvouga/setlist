@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-const { logout, isLoading: isLoggingOut } = useLogout();
+const { logout, status: logoutStatus } = useLogout();
+
+// const router = useRouter();
+
+// watch(logoutStatus, () => {
+//   router.push("/login");
+// });
 </script>
 <template>
   <nav class="container fw-bold px-4 p-2">
@@ -14,7 +20,7 @@ const { logout, isLoading: isLoggingOut } = useLogout();
     <Button
       variant="primary"
       class="w-100"
-      :loading="isLoggingOut"
+      :loading="logoutStatus === 'Loading'"
       @click="logout">
       <Icon name="logout" />
       Logout

@@ -14,6 +14,8 @@ watch(pass, () => {
   passProblems.value = [];
 });
 
+const router = useRouter();
+
 const createAccount = async () => {
   status.value = "Loading";
   const result = await $fetch("/api/account-create", {
@@ -29,7 +31,7 @@ const createAccount = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    // todo add feedback
+    router.push("/login");
     return;
   }
 

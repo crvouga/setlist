@@ -1,3 +1,14 @@
+<script lang="ts" setup>
+const { status } = useSession();
+const router = useRouter();
+
+watch(status, () => {
+  console.log(status.value);
+  if (status.value === "LoggedOut") {
+    router.push("/login");
+  }
+});
+</script>
 <template>
   <NuxtLayout>
     <NuxtPage />
