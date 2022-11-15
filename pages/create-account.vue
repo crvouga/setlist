@@ -24,6 +24,9 @@ const createAccount = async () => {
     },
   });
 
+  emailProblems.value = [];
+  passProblems.value = [];
+
   if (result.type === "Ok") {
     status.value = "Ok";
     // todo add feedback

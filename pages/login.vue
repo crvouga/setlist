@@ -25,10 +25,11 @@ const login = async () => {
     },
   });
 
+  emailProblems.value = [];
+  passProblems.value = [];
+
   if (result.type === "Ok") {
     status.value = "Ok";
-    emailProblems.value = [];
-    passProblems.value = [];
     // todo add feedback
     return;
   }
