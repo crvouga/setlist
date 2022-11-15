@@ -7,9 +7,9 @@ defineProps<{
 
 const nameToClass: { [name in Name]: string } = {
   "create-account": "bi-person-plus-fill",
-  "eye-slash": "bi-eye-slash",
-  eye: "bi-eye",
-  login: "bi-door-open",
+  "eye-slash": "bi-eye-slash-fill",
+  eye: "bi-eye-fill",
+  login: "bi-door-open-fill",
   logout: "bi-door-closed-fill",
 };
 </script>

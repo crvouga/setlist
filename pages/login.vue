@@ -108,7 +108,7 @@ const login = async () => {
           variant="primary"
           size="lg"
           class="w-100">
-          <i class="bi bi-door-open"></i>
+          <Icon name="login" />
           Login
         </Button>
       </form>
