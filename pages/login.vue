@@ -14,10 +14,6 @@ watch(pass, () => {
   passProblems.value = [];
 });
 
-const isSubmitted = computed(
-  () => status.value === "Ok" || status.value === "Err"
-);
-
 const login = async () => {
   status.value = "Loading";
 
@@ -45,8 +41,8 @@ const login = async () => {
   <div class="layout">
     <main class="form-login w-100 m-auto">
       <h1
-        class="text-center mb-3 fw-bolder text-primary"
-        style="font-size: 3rem">
+        class="text-center mb-3 fw-bold text-primary"
+        style="font-size: 3rem; font-weight: 900">
         Login
       </h1>
 
@@ -64,7 +60,6 @@ const login = async () => {
             class="form-control"
             :class="{
               'is-invalid': emailProblems.length > 0,
-              'is-valid': emailProblems.length === 0 && isSubmitted,
             }"
             id="email"
             v-model="email"
