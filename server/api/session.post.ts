@@ -1,7 +1,9 @@
+import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
 import { Email, Password } from "~~/utils/account";
 import { Err, Ok } from "~~/utils/result";
+import { Session } from "~~/utils/session";
 
 const Body = z.object({
   email: Email,
@@ -22,14 +24,38 @@ export default defineEventHandler(async (event) => {
     } as const);
   }
 
-  const result = await db.account.findByEmail({ email: parsed.data.email });
+  const found = await db.account.findByEmail({ email: parsed.data.email });
 
-  if (result.type === "Err") {
-    return Err({ type: "database", message: result.error } as const);
+  if (found.type === "Err") {
+    return Err({ type: "database", message: found.error } as const);
   }
 
-  if (result.data.length === 0) {
+  const account = found.data[0];
+
+  if (!account) {
     return Err({ type: "account_does_not_exists" } as const);
+  }
+
+  const sessionNew: Session = {
+    accountId: account.id,
+    id: v4(),
+  };
+
+  // ensure an account can have at most one session
+  const deleted = await db.session.deleteByAccountId({
+    accountId: sessionNew.accountId,
+  });
+
+  if (deleted.type === "Err") {
+    return Err({ type: "database", message: deleted.error } as const);
+  }
+
+  const inserted = await db.session.insert({
+    session: sessionNew,
+  });
+
+  if (inserted.type === "Err") {
+    return Err({ type: "database", message: inserted.error } as const);
   }
 
   return Ok(null);

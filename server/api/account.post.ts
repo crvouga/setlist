@@ -1,13 +1,8 @@
+import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
 import { Err, Ok } from "~~/utils";
-import {
-  Account,
-  Email,
-  generateAccountId,
-  hashPassword,
-  Password,
-} from "~~/utils/account";
+import { Account, Email, hashPassword, Password } from "~~/utils/account";
 
 const Body = z.object({
   email: Email,
@@ -55,7 +50,7 @@ export default defineEventHandler(async (event) => {
 
   const accountNew: Account = {
     email: parsed.data.email,
-    id: generateAccountId(),
+    id: v4(),
     passwordHash: hashed.data,
   };
 

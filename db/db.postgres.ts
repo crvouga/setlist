@@ -1,7 +1,7 @@
 import pg from "pg";
 import { Err, Ok } from "../utils";
 import { Db } from "./db.interface";
-import { Accounts, AccountsId } from "./postgres-tables";
+import { Accounts, AccountsId, Sessions, SessionsId } from "./postgres-tables";
 
 //
 // https://node-postgres.com/features/connecting#environment-variables
@@ -22,6 +22,37 @@ const query = async <TRow>(sql: string) => {
 };
 
 export const db: Db = {
+  session: {
+    async insert(params) {
+      const row: Sessions = {
+        account_id: params.session.accountId,
+        id: params.session.id as SessionsId,
+      };
+
+      const result = await query<Sessions>(
+        `INSERT INTO sessions (id, account_id) VALUES ('${row.id}', '${row.account_id}')`
+      );
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      return Ok(null);
+    },
+
+    async deleteByAccountId(params) {
+      const result = await query(
+        `DELETE FROM sessions WHERE account_id='${params.accountId}'`
+      );
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      return Ok(null);
+    },
+  },
+
   account: {
     async insert(params) {
       const row: Accounts = {

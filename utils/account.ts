@@ -1,6 +1,5 @@
-import { v4 } from "uuid";
-import { z } from "zod";
 import bcrypt from "bcrypt";
+import { z } from "zod";
 import { Err, Ok, Result } from "./result";
 
 export const Password = z.string().min(3);
@@ -15,10 +14,6 @@ export const Account = z.object({
   passwordHash: z.string(),
 });
 export type Account = z.infer<typeof Account>;
-
-export const generateAccountId = (): string => {
-  return v4();
-};
 
 const saltRounds = 10;
 
