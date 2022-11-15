@@ -147,6 +147,14 @@ const login = async () => {
           Login
         </button>
       </form>
+
+      <div class="d-flex flex-column justify-content-center p-5">
+        <p class="h6 text-center">Don't have an account?</p>
+        <NuxtLink to="/create-account" class="btn btn-primary">
+          <i class="bi bi-person-plus-fill"></i>
+          Create New Account
+        </NuxtLink>
+      </div>
     </main>
   </div>
 </template>
