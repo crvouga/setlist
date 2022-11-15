@@ -7,7 +7,7 @@ defineProps<{
 </script>
 <template>
   <button
-    class="btn d-flex justify-content-center align-items-center gap-2"
+    class="btn d-flex justify-content-center align-items-center gap-2 position-relative"
     :disabled="loading"
     :class="{
       'btn-primary': variant === 'primary',
@@ -19,8 +19,10 @@ defineProps<{
     }">
     <div
       v-if="loading"
-      class="spinner-border"
-      style="width: 1.9rem; height: 1.9rem" />
-    <slot v-else />
+      class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
+      <div class="spinner-border" style="width: 1.75rem; height: 1.75rem" />
+    </div>
+
+    <slot :class="{ 'opacity-0': loading }" />
   </button>
 </template>

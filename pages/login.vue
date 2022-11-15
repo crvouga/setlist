@@ -17,7 +17,7 @@ watch(pass, () => {
 const login = async () => {
   status.value = "Loading";
 
-  const result = await $fetch("/api/session", {
+  const result = await $fetch("/api/session-login", {
     method: "POST",
     body: {
       email: email.value,
@@ -25,23 +25,28 @@ const login = async () => {
     },
   });
 
-  if (result.type === "Err" && result.error.type === "validation") {
+  if (result.type === "Ok") {
+    status.value = "Ok";
+    emailProblems.value = [];
+    passProblems.value = [];
+    // todo add feedback
+    return;
+  }
+
+  if (result.error.type === "validation") {
     status.value = "Err";
     emailProblems.value = result.error.email;
     passProblems.value = result.error.pass;
     return;
   }
 
-  if (result.type === "Err" && result.error.type === "database") {
+  if (result.error.type === "database") {
     status.value = "Err";
     problems.value = [result.error.message];
     return;
   }
 
-  if (
-    result.type === "Err" &&
-    result.error.type === "account_does_not_exists"
-  ) {
+  if (result.error.type === "account_does_not_exists") {
     status.value = "Err";
     emailProblems.value = [
       `Can't find account using this email. Try creating an account.`,
@@ -49,9 +54,10 @@ const login = async () => {
     return;
   }
 
-  status.value = "Ok";
-  emailProblems.value = [];
-  passProblems.value = [];
+  if (result.error.type === "wrong_password") {
+    status.value = "Err";
+    passProblems.value = [`Wrong password!`];
+  }
 };
 </script>
 <template>

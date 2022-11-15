@@ -26,6 +26,7 @@ const createAccount = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
+    // todo add feedback
     return;
   }
 
@@ -49,7 +50,7 @@ const createAccount = async () => {
 };
 </script>
 <template>
-  <main class="p-4 fw-bold">
+  <main class="p-4 fw-bold m-auto form-create-account">
     <h1 class="fw-bolder mb-4">Create Account</h1>
 
     <!-- email -->
@@ -106,3 +107,9 @@ const createAccount = async () => {
     </div>
   </main>
 </template>
+
+<style>
+.form-create-account {
+  max-width: 480px;
+}
+</style>

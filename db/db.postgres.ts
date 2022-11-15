@@ -40,6 +40,16 @@ export const db: Db = {
       return Ok(null);
     },
 
+    async deleteById(params) {
+      const result = await query(
+        `DELETE FROM sessions WHERE id='${params.id}'`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(null);
+    },
+
     async deleteByAccountId(params) {
       const result = await query(
         `DELETE FROM sessions WHERE account_id='${params.accountId}'`
@@ -50,6 +60,29 @@ export const db: Db = {
       }
 
       return Ok(null);
+    },
+
+    async findById(params) {
+      const result = await query<Sessions>(
+        `SELECT * FROM sessions WHERE id='${params.id}'`
+      );
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      const sessions = result.data.map((row) => ({
+        id: row.id,
+        accountId: row.account_id,
+      }));
+
+      const session = sessions[0];
+
+      if (!session) {
+        return Ok(null);
+      }
+
+      return Ok(session);
     },
   },
 

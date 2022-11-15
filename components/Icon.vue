@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-type Name = "login" | "create-account" | "eye" | "eye-slash";
+type Name = "login" | "create-account" | "eye" | "eye-slash" | "logout";
 
 defineProps<{
   name: Name;
@@ -10,6 +10,7 @@ const nameToClass: { [name in Name]: string } = {
   "eye-slash": "bi-eye-slash",
   eye: "bi-eye",
   login: "bi-door-open",
+  logout: "bi-door-closed-fill",
 };
 </script>
 

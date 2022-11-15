@@ -1,9 +1,9 @@
 import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
-import { Email, Password } from "~~/utils/account";
+import { Email, isCorrectPassword, Password } from "~~/utils/account";
 import { Err, Ok } from "~~/utils/result";
-import { Session } from "~~/utils/session";
+import { Session, sessionIdCookieName } from "~~/utils/session";
 
 const Body = z.object({
   email: Email,
@@ -36,6 +36,17 @@ export default defineEventHandler(async (event) => {
     return Err({ type: "account_does_not_exists" } as const);
   }
 
+  if (
+    !isCorrectPassword({
+      passwordHash: account.passwordHash,
+      password: parsed.data.pass,
+    })
+  ) {
+    return Err({ type: "wrong_password" } as const);
+  }
+
+  account.passwordHash;
+
   const sessionNew: Session = {
     accountId: account.id,
     id: v4(),
@@ -57,6 +68,8 @@ export default defineEventHandler(async (event) => {
   if (inserted.type === "Err") {
     return Err({ type: "database", message: inserted.error } as const);
   }
+
+  setCookie(event, sessionIdCookieName, sessionNew.id);
 
   return Ok(null);
 });
