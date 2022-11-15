@@ -1,7 +1,7 @@
 const { generateIndexFile } = require("kanel");
 require("dotenv").config();
 
-const outputPath = "./tables";
+const outputPath = "./db/postgres-tables";
 
 const PGDATABASE = process.env["PGDATABASE"];
 const PGHOST = process.env["PGHOST"];
@@ -14,8 +14,6 @@ if (!PGDATABASE || !PGHOST || !PGPASSWORD || !PGPORT || !PGUSER) {
 }
 
 const databaseUrl = `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}}/${PGDATABASE}`;
-
-console.log({ databaseUrl });
 
 /** @type {import('../src/Config').default} */
 module.exports = {

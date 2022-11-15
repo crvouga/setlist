@@ -1,16 +1,16 @@
 import { z } from "zod";
 import { db } from "~~/db";
-import { Accounts } from "~~/tables";
+import { Email, Password } from "~~/utils/account";
 import { Err, Ok } from "~~/utils/result";
 
-const SessionPostBody = z.object({
-  email: z.string().email(),
-  pass: z.string().min(3),
+const Body = z.object({
+  email: Email,
+  pass: Password,
 });
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<unknown>(event);
-  const parsed = SessionPostBody.safeParse(body);
+  const parsed = Body.safeParse(body);
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.formErrors.fieldErrors;
@@ -22,9 +22,7 @@ export default defineEventHandler(async (event) => {
     } as const);
   }
 
-  const result = await db.query<Accounts>(
-    `select * from accounts where email_address='${parsed.data.email}'`
-  );
+  const result = await db.account.findByEmail({ email: parsed.data.email });
 
   if (result.type === "Err") {
     return Err({ type: "database", message: result.error } as const);

@@ -10,7 +10,7 @@ export default interface Accounts {
 
   email_address: string;
 
-  password: string;
+  password_hash: string;
 }
 
 /** Represents the initializer for the table public.accounts */
@@ -19,7 +19,7 @@ export interface AccountsInitializer {
 
   email_address: string;
 
-  password: string;
+  password_hash: string;
 }
 
 /** Represents the mutator for the table public.accounts */
@@ -28,5 +28,5 @@ export interface AccountsMutator {
 
   email_address?: string;
 
-  password?: string;
+  password_hash?: string;
 }

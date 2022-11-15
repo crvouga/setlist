@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 const email = ref("");
 const pass = ref("");
-const visibility = ref<"Hidden" | "Showing">("Hidden");
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 const emailProblems = ref<string[]>([]);
 const passProblems = ref<string[]>([]);
@@ -58,21 +57,10 @@ const login = async () => {
 <template>
   <div class="layout">
     <main class="form-login w-100 m-auto p-3">
-      <!-- <h1
-        class="text-center mb-3 fw-bold text-primary"
-        style="font-size: 3rem; font-weight: 900">
-        Login
-      </h1> -->
-
       <Logo class="text-center" />
 
       <form @submit.prevent="login" class="fw-bold" novalidate>
-        <!-- 
-
-            Email
-
-         -->
-
+        <!-- Email -->
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input
@@ -89,65 +77,33 @@ const login = async () => {
           </p>
         </div>
 
-        <!-- 
-
-            Pass
-
-         -->
-
+        <!-- Pass -->
         <div class="mb-4">
           <label class="form-label" for="password">Password</label>
-          <div class="input-group">
-            <input
-              v-model="pass"
-              :type="visibility === 'Hidden' ? 'password' : 'text'"
-              class="form-control"
-              id="password"
-              :class="{
-                'is-invalid': passProblems.length > 0,
-              }"
-              required />
-
-            <button
-              v-if="visibility === 'Showing'"
-              class="btn btn-primary"
-              @click="visibility = 'Hidden'">
-              <i class="bi bi-eye-slash"></i>
-              Hide
-            </button>
-            <button
-              v-if="visibility === 'Hidden'"
-              class="btn btn-primary"
-              @click="visibility = 'Showing'">
-              <i class="bi bi-eye"></i>
-              Show
-            </button>
-          </div>
+          <PasswordInput
+            v-model="pass"
+            :input-class="{
+              'is-invalid': passProblems.length > 0,
+            }" />
           <p v-for="problem in passProblems" class="mt-1 text-danger">
             {{ problem }}
           </p>
         </div>
 
+        <!-- Problems -->
         <p v-for="problem in problems" class="mt-1 alert alert-danger">
           {{ problem }}
         </p>
 
-        <!-- 
-
-            Submit
-
-         -->
-
-        <button
-          v-if="status === 'Loading'"
-          class="btn btn-primary btn-lg w-100"
-          disabled>
-          <div class="spinner-border" style="width: 1.5rem; height: 1.5rem" />
-        </button>
-        <button type="submit" v-else class="btn btn-primary btn-lg w-100">
+        <!-- Submit -->
+        <Button
+          :loading="status === 'Loading'"
+          variant="primary"
+          size="lg"
+          class="w-100">
           <i class="bi bi-door-open"></i>
           Login
-        </button>
+        </Button>
       </form>
 
       <div class="d-flex flex-column justify-content-center p-5">
