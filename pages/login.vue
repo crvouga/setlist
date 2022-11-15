@@ -5,6 +5,7 @@ const visibility = ref<"Hidden" | "Showing">("Hidden");
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 const emailProblems = ref<string[]>([]);
 const passProblems = ref<string[]>([]);
+const problems = ref<string[]>([]);
 
 watch(email, () => {
   emailProblems.value = [];
@@ -25,10 +26,27 @@ const login = async () => {
     },
   });
 
-  if (result.type === "Err") {
+  if (result.type === "Err" && result.error.type === "validation") {
     status.value = "Err";
     emailProblems.value = result.error.email;
     passProblems.value = result.error.pass;
+    return;
+  }
+
+  if (result.type === "Err" && result.error.type === "database") {
+    status.value = "Err";
+    problems.value = [result.error.message];
+    return;
+  }
+
+  if (
+    result.type === "Err" &&
+    result.error.type === "account_does_not_exists"
+  ) {
+    status.value = "Err";
+    emailProblems.value = [
+      `Can't find account using this email. Try creating an account.`,
+    ];
     return;
   }
 
@@ -107,6 +125,10 @@ const login = async () => {
             {{ problem }}
           </p>
         </div>
+
+        <p v-for="problem in problems" class="mt-1 alert alert-danger">
+          {{ problem }}
+        </p>
 
         <!-- 
 

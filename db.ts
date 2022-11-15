@@ -1,4 +1,5 @@
 import pg from "pg";
+import { Err, Ok } from "./utils";
 
 //
 // https://node-postgres.com/features/connecting#environment-variables
@@ -7,4 +8,15 @@ import pg from "pg";
 // pg connects by using env vars named by postgres convention
 //
 
-export const db = new pg.Pool();
+const pool = new pg.Pool();
+
+export const db = {
+  query: async <TRow>(sql: string) => {
+    try {
+      const res = await pool.query(sql);
+      return Ok(res.rows as TRow[]);
+    } catch (error) {
+      return Err(String(error));
+    }
+  },
+};
