@@ -105,6 +105,29 @@ export const db: Db = {
       return Ok(null);
     },
 
+    async findById(params) {
+      const result = await query<Accounts>(
+        `SELECT * FROM accounts WHERE id='${params.id}'`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
+
+      const accounts = result.data.map((row) => ({
+        id: row.id,
+        email: row.email_address,
+        passwordHash: row.password_hash,
+      }));
+
+      const found = accounts[0];
+
+      if (!found) {
+        return Ok(null);
+      }
+
+      return Ok(found);
+    },
+
     async findByEmail(params) {
       const result = await query<Accounts>(
         `SELECT * FROM accounts WHERE email_address='${params.email}'`

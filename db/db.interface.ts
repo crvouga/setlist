@@ -10,6 +10,9 @@ export type Db = {
     insert: (params: {
       account: AccountWithPassword;
     }) => Promise<Result<string, null>>;
+    findById: (params: {
+      id: string;
+    }) => Promise<Result<string, AccountWithPassword | null>>;
   };
 
   session: {

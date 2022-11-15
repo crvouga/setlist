@@ -14,6 +14,7 @@ watch(pass, () => {
   passProblems.value = [];
 });
 
+const router = useRouter();
 const login = async () => {
   status.value = "Loading";
 
@@ -30,7 +31,7 @@ const login = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    // todo add feedback
+    router.push("/");
     return;
   }
 

@@ -16,7 +16,7 @@ watch(pass, () => {
 
 const createAccount = async () => {
   status.value = "Loading";
-  const result = await $fetch("/api/account", {
+  const result = await $fetch("/api/account-create", {
     method: "POST",
     body: {
       email: email.value,
