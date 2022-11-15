@@ -57,12 +57,14 @@ const login = async () => {
 </script>
 <template>
   <div class="layout">
-    <main class="form-login w-100 m-auto">
-      <h1
+    <main class="form-login w-100 m-auto p-3">
+      <!-- <h1
         class="text-center mb-3 fw-bold text-primary"
         style="font-size: 3rem; font-weight: 900">
         Login
-      </h1>
+      </h1> -->
+
+      <Logo class="text-center" />
 
       <form @submit.prevent="login" class="fw-bold" novalidate>
         <!-- 
@@ -161,7 +163,7 @@ const login = async () => {
 
 <style>
 .form-login {
-  max-width: 320px;
+  max-width: 480px;
 }
 .layout {
   display: flex;
