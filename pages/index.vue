@@ -1,17 +1,14 @@
-<script lang="ts" setup>
-const { logout, isLoading } = useLogout();
-const { account, refresh } = useSession();
-</script>
 <template>
+  <nav
+    class="w-100 d-flex container px-4 py-2 align-items-center justify-content-between">
+    <Logo class="fs-1 mb-0" />
+
+    <NuxtLink to="/account" class="btn btn-primary">
+      <Icon name="account" />
+      Account
+    </NuxtLink>
+  </nav>
   <main class="container">
-    <h1>Index page</h1>
     <NuxtLink to="login">Login</NuxtLink>
-    <pre>
-      {{ JSON.stringify(account, null, 4) }}
-    </pre>
-    <Button :loading="isLoading" variant="primary" @click="logout">
-      <Icon name="logout" />
-      Logout
-    </Button>
   </main>
 </template>

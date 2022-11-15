@@ -21,7 +21,6 @@ export const useSession = () => {
     status.value = "LoggedIn";
     account.value = result.data;
   };
-  onMounted(refresh);
   return { account, status, refresh };
 };
 

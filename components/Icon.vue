@@ -1,12 +1,21 @@
 <script lang="ts" setup>
-type Name = "login" | "create-account" | "eye" | "eye-slash" | "logout";
+type Name =
+  | "back"
+  | "login"
+  | "create-account"
+  | "eye"
+  | "eye-slash"
+  | "logout"
+  | "account";
 
 defineProps<{
   name: Name;
 }>();
 
 const nameToClass: { [name in Name]: string } = {
+  back: "bi-chevron-left",
   "create-account": "bi-person-plus-fill",
+  account: "bi-person-fill",
   "eye-slash": "bi-eye-slash-fill",
   eye: "bi-eye-fill",
   login: "bi-door-open-fill",
