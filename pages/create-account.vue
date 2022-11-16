@@ -18,6 +18,7 @@ const router = useRouter();
 
 const createAccount = async () => {
   status.value = "Loading";
+
   const result = await $fetch("/api/account-create", {
     method: "POST",
     body: {
