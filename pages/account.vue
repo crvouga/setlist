@@ -1,11 +1,15 @@
 <script lang="ts" setup>
-const { logout, status: logoutStatus } = useLogout();
+const router = useRouter();
 
-// const router = useRouter();
-
-// watch(logoutStatus, () => {
-//   router.push("/login");
-// });
+const logout = async () => {
+  const result = await $fetch("/api/session-logout", {
+    method: "POST",
+  });
+  if (result.type === "Ok") {
+    router.push({ name: "login" });
+    return;
+  }
+};
 </script>
 <template>
   <nav class="container fw-bold px-4 p-2">
@@ -17,11 +21,7 @@ const { logout, status: logoutStatus } = useLogout();
   <main class="container fw-bold">
     <h1 class="fs-1">Account</h1>
 
-    <Button
-      variant="primary"
-      class="w-100"
-      :loading="logoutStatus === 'Loading'"
-      @click="logout">
+    <Button variant="primary" class="w-100" @click="logout">
       <Icon name="logout" />
       Logout
     </Button>

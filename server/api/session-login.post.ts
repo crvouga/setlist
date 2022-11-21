@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "~~/db";
 import { Email, isCorrectPassword, Password } from "~~/utils/account";
 import { Err, Ok } from "~~/utils/result";
-import { Session, sessionIdCookieName } from "~~/utils/session";
+import { sessionIdCookieName, Session } from "~~/utils/session";
 
 const Body = z.object({
   email: Email,
@@ -45,8 +45,6 @@ export default defineEventHandler(async (event) => {
     return Err({ type: "wrong_password" } as const);
   }
 
-  account.passwordHash;
-
   const sessionNew: Session = {
     accountId: account.id,
     id: v4(),
@@ -71,5 +69,5 @@ export default defineEventHandler(async (event) => {
 
   setCookie(event, sessionIdCookieName, sessionNew.id);
 
-  return Ok(null);
+  return Ok({ sessionId: sessionNew.id, id: account.id, email: account.email });
 });

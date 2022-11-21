@@ -1,18 +1,33 @@
+import { z } from "zod";
 import { db } from "~~/db";
 import { Err, Ok } from "~~/utils";
 import { Account } from "~~/utils/account";
 import { SessionId, sessionIdCookieName } from "~~/utils/session";
 
+const Query = z.object({
+  sessionId: SessionId,
+});
+
 export default defineEventHandler(async (event) => {
-  const cookieValue = getCookie(event, sessionIdCookieName);
+  const cookie = getCookie(event, sessionIdCookieName);
+  const parsedCookie = SessionId.safeParse(cookie);
 
-  const parsedId = SessionId.safeParse(cookieValue);
+  const query = getQuery(event);
+  const parsedQuery = Query.safeParse(query);
 
-  if (!parsedId.success) {
+  const sessionId = parsedCookie.success
+    ? parsedCookie.data
+    : parsedQuery.success
+    ? parsedQuery.data.sessionId
+    : null;
+
+  if (!sessionId) {
     return Ok(null);
   }
 
-  const foundSession = await db.session.findById({ id: parsedId.data });
+  const foundSession = await db.session.findById({
+    id: sessionId,
+  });
 
   if (foundSession.type === "Err") {
     return Err({ type: "server_error", message: foundSession.error } as const);
