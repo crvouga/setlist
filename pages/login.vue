@@ -5,6 +5,7 @@ const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 const emailProblems = ref<string[]>([]);
 const passProblems = ref<string[]>([]);
 const problems = ref<string[]>([]);
+const router = useRouter();
 
 watch(email, () => {
   emailProblems.value = [];
@@ -14,7 +15,6 @@ watch(pass, () => {
   passProblems.value = [];
 });
 
-const router = useRouter();
 const login = async () => {
   status.value = "Loading";
 
@@ -80,7 +80,10 @@ const login = async () => {
             id="email"
             v-model="email"
             required />
-          <p v-for="problem in emailProblems" class="mt-1 text-danger">
+          <p
+            v-for="problem in emailProblems"
+            class="mt-1 text-danger"
+            v-bind:key="problem">
             {{ problem }}
           </p>
         </div>
@@ -93,13 +96,19 @@ const login = async () => {
             :input-class="{
               'is-invalid': passProblems.length > 0,
             }" />
-          <p v-for="problem in passProblems" class="mt-1 text-danger">
+          <p
+            v-for="problem in passProblems"
+            v-bind:key="problem"
+            class="mt-1 text-danger">
             {{ problem }}
           </p>
         </div>
 
         <!-- Problems -->
-        <p v-for="problem in problems" class="mt-1 alert alert-danger">
+        <p
+          v-for="problem in problems"
+          v-bind:key="problem"
+          class="mt-1 alert alert-danger">
           {{ problem }}
         </p>
 
@@ -114,9 +123,9 @@ const login = async () => {
         </Button>
       </form>
 
-      <div class="d-flex flex-column justify-content-center p-5">
-        <p class="h6 text-center">Don't have an account?</p>
-        <NuxtLink to="/create-account" class="btn btn-primary">
+      <div class="d-flex flex-column justify-content-center py-5">
+        <p class="h6 text-center text-muted">Don't have an account?</p>
+        <NuxtLink to="/create-account" class="btn btn-sm btn-outline-primary">
           <i class="bi bi-person-plus-fill"></i>
           Create New Account
         </NuxtLink>
