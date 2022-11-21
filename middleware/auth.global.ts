@@ -2,7 +2,8 @@ import { sessionIdCookieName } from "../utils/session";
 
 // docs: https://nuxt.com/docs/guide/directory-structure/middleware
 export default defineNuxtRouteMiddleware(async (to, _from) => {
-  if (to.path === "/login" || to.path === "/create-account") {
+  // prevents infinite loop
+  if (to.path === "/session-login" || to.path === "/account-create") {
     return;
   }
 
@@ -16,11 +17,11 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
   if (result.type === "Err") {
     authAccount.value = null;
-    return navigateTo({ name: "login" });
+    return navigateTo({ name: "session-login" });
   }
 
   if (!result.data) {
     authAccount.value = null;
-    return navigateTo({ name: "login" });
+    return navigateTo({ name: "session-login" });
   }
 });

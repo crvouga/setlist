@@ -12,7 +12,7 @@ const logout = async () => {
 };
 </script>
 <template>
-  <nav class="container fw-bold px-4 p-2">
+  <nav class="container fw-bold p-2">
     <NuxtLink to="/" class="btn btn-primary">
       <Icon name="back" />
       Back

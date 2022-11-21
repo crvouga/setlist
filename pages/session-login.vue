@@ -125,8 +125,10 @@ const login = async () => {
 
       <div class="d-flex flex-column justify-content-center py-5">
         <p class="h6 text-center text-muted">Don't have an account?</p>
-        <NuxtLink to="/create-account" class="btn btn-sm btn-outline-primary">
-          <i class="bi bi-person-plus-fill"></i>
+        <NuxtLink
+          :to="{ name: 'account-create' }"
+          class="btn btn-sm btn-outline-primary">
+          <Icon name="create-account" />
           Create New Account
         </NuxtLink>
       </div>

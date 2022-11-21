@@ -6,6 +6,7 @@ type Name =
   | "eye"
   | "eye-slash"
   | "logout"
+  | "plus"
   | "account";
 
 defineProps<{
@@ -20,6 +21,7 @@ const nameToClass: { [name in Name]: string } = {
   eye: "bi-eye-fill",
   login: "bi-door-open-fill",
   logout: "bi-door-closed-fill",
+  plus: "bi-plus",
 };
 </script>
 
