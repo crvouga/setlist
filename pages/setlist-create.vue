@@ -11,6 +11,8 @@ watch(name, () => {
 
 const problems = ref<string[]>([]);
 
+const router = useRouter();
+
 const create = async () => {
   problems.value = [];
   status.value = "Loading";
@@ -26,7 +28,7 @@ const create = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    console.log(result.data);
+    router.push(`/setlist/${result.data.id}`);
     return;
   }
 
