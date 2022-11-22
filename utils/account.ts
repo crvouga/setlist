@@ -8,8 +8,10 @@ export type Password = z.infer<typeof Password>;
 export const Email = z.string().email();
 export type Email = z.infer<typeof Email>;
 
+export const AccountId = z.string().uuid();
+
 export const Account = z.object({
-  id: z.string().uuid(),
+  id: AccountId,
   email: Email,
 });
 export type Account = z.infer<typeof Account>;

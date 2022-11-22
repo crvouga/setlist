@@ -24,4 +24,6 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     authAccount.value = null;
     return navigateTo({ name: "session-login" });
   }
+
+  authAccount.value = result.data;
 });

@@ -1,3 +1,41 @@
+<script lang="ts" setup>
+import { SetlistPostBody } from "~~/utils/setlist";
+
+const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
+
+const name = ref("");
+const nameProblems = ref<string[]>([]);
+watch(name, () => {
+  nameProblems.value = [];
+});
+
+const account = useAuthAccount();
+
+const create = async () => {
+  if (!account.value) {
+    return;
+  }
+
+  status.value = "Loading";
+
+  const body: SetlistPostBody = {
+    creatorId: account.value.id,
+    name: name.value,
+  };
+
+  const result = await $fetch("/api/setlist-create", {
+    method: "POST",
+    body,
+  });
+
+  if (result.error.type === "validation") {
+    status.value = "Err";
+    nameProblems.value = result.error.name;
+    return;
+  }
+};
+</script>
+
 <template>
   <nav class="container p-2">
     <NuxtLink to="/" class="btn btn-primary">
@@ -11,13 +49,18 @@
       <div class="col-12 col-md-8 col-lg-6">
         <h2 class="fs-1 fw-bold">Create Setlist</h2>
 
-        <div class="fw-bold">
-          <label for="name" class="form-label">Name</label>
-          <input class="form-control" id="name" required />
-        </div>
+        <TextField
+          label="Name"
+          id="name"
+          v-model="name"
+          :problems="nameProblems" />
 
         <div class="mt-4">
-          <Button class="w-100" variant="primary">
+          <Button
+            class="w-100"
+            variant="primary"
+            @click="create()"
+            :loading="status === 'Loading'">
             <Icon name="plus" />
             Create
           </Button>
