@@ -30,4 +30,11 @@ export type Db = {
   setlist: {
     insert: (params: { setlist: Setlist }) => Promise<Result<string, null>>;
   };
+
+  account_setlist: {
+    insert: (params: {
+      setlistId: string;
+      accountId: string;
+    }) => Promise<Result<string, null>>;
+  };
 };

@@ -12,6 +12,7 @@ watch(name, () => {
 const problems = ref<string[]>([]);
 
 const create = async () => {
+  problems.value = [];
   status.value = "Loading";
 
   const body: SetlistPostBody = {

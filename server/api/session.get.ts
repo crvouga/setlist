@@ -2,7 +2,7 @@ import { z } from "zod";
 import { db } from "~~/db";
 import { Err, Ok } from "~~/utils";
 import { Account } from "~~/utils/account";
-import { SessionId, sessionIdCookieName } from "~~/utils/session";
+import { SessionId } from "~~/utils/session";
 
 export default defineEventHandler(async (event) => {
   // todo get this working

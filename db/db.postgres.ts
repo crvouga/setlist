@@ -1,9 +1,12 @@
 import pg from "pg";
+import { v4 } from "uuid";
 import { Err, Ok } from "../utils";
 import { Db } from "./db.interface";
 import {
   Accounts,
   AccountsId,
+  AccountsSetlists,
+  AccountsSetlistsId,
   Sessions,
   SessionsId,
   Setlists,
@@ -25,6 +28,23 @@ const query = async <TRow>(sql: string) => {
     return Ok(res.rows as TRow[]);
   } catch (error) {
     return Err(`Database error! ${String(error)}`);
+  }
+};
+
+const transact = async (sqlList: string[]) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    for (const sql of sqlList) {
+      await client.query(sql);
+    }
+    await client.query("COMMIT");
+    return Ok(null);
+  } catch (error) {
+    await client.query("ROLLBACK");
+    return Err(`Database error! ${String(error)}`);
+  } finally {
+    client.release();
   }
 };
 
@@ -160,8 +180,34 @@ export const db: Db = {
         name: params.setlist.name,
       };
 
+      const rowAccountsSetlists: AccountsSetlists = {
+        account_id: row.creator_id as AccountsId,
+        id: v4() as AccountsSetlistsId,
+        setlist_id: row.id,
+      };
+
+      const result = await transact([
+        `INSERT INTO setlists (id, name, creator_id) VALUES ('${row.id}', '${row.name}', '${row.creator_id}')`,
+        `INSERT INTO accounts_setlists (id, account_id, setlist_id) VALUES ('${rowAccountsSetlists.id}', '${rowAccountsSetlists.account_id}', '${rowAccountsSetlists.setlist_id}')`,
+      ]);
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      return Ok(null);
+    },
+  },
+  account_setlist: {
+    async insert(params) {
+      const row: AccountsSetlists = {
+        account_id: params.accountId as AccountsId,
+        id: v4() as AccountsSetlistsId,
+        setlist_id: params.setlistId as SetlistsId,
+      };
+
       const result = await query(
-        `INSERT INTO setlists (id, name, creator_id) VALUES ('${row.id}', '${row.name}', '${row.creator_id}')`
+        `INSERT INTO accounts_setlists (id, account_id, setlist_id) VALUES ('${row.id}', '${row.account_id}', '${row.setlist_id}')`
       );
 
       if (result.type === "Err") {
