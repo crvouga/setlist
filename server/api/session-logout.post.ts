@@ -1,16 +1,16 @@
 import { db } from "~~/db";
 import { Err, Ok } from "~~/utils";
-import { SessionId, sessionIdCookieName } from "~~/utils/session";
+import { sessionIdCookieName } from "~~/utils/session";
+import { getAuthSession } from "../utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const cookie = getCookie(event, sessionIdCookieName);
-  const parsed = SessionId.safeParse(cookie);
-  if (!parsed.success) {
-    return Err({ type: "not_logged_in" });
+  const found = await getAuthSession(event);
+  if (found.type === "Err") {
+    return found;
   }
-  const deleted = await db.session.deleteById({ id: parsed.data });
+  const deleted = await db.session.deleteById({ id: found.data.id });
   if (deleted.type === "Err") {
-    return Err({ type: "server_error", message: deleted.error });
+    return Err({ type: "server_error", message: deleted.error } as const);
   }
   setCookie(event, sessionIdCookieName, "");
   return Ok(null);

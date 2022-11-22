@@ -67,7 +67,12 @@ export default defineEventHandler(async (event) => {
     return Err({ type: "database", message: inserted.error } as const);
   }
 
-  setCookie(event, sessionIdCookieName, sessionNew.id);
+  setCookie(event, sessionIdCookieName, sessionNew.id, {
+    // todo get httpOnly session cookie working
+    // httpOnly: true,
+    // path: "/",
+    // sameSite: "strict",
+  });
 
   return Ok({ sessionId: sessionNew.id, id: account.id, email: account.email });
 });

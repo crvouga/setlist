@@ -28,8 +28,9 @@ const create = async () => {
     body,
   });
 
+  status.value = "Err";
+
   if (result.error.type === "validation") {
-    status.value = "Err";
     nameProblems.value = result.error.name;
     return;
   }

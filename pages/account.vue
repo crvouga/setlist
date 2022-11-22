@@ -6,7 +6,7 @@ const logout = async () => {
     method: "POST",
   });
   if (result.type === "Ok") {
-    router.push({ name: "login" });
+    router.push({ name: "session-login" });
     return;
   }
 };

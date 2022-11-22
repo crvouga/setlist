@@ -4,29 +4,26 @@ import { Err, Ok } from "~~/utils";
 import { Account } from "~~/utils/account";
 import { SessionId, sessionIdCookieName } from "~~/utils/session";
 
-const Query = z.object({
-  sessionId: SessionId,
-});
-
 export default defineEventHandler(async (event) => {
-  const cookie = getCookie(event, sessionIdCookieName);
-  const parsedCookie = SessionId.safeParse(cookie);
+  // todo get this working
+  // const cookie = getCookie(event, sessionIdCookieName);
+  // if (!cookie) {
+  //   return Err({ type: "no_session_cookie" } as const);
+  // }
+  // const parsed = SessionId.safeParse(cookie);
+  // if (!parsed.success) {
+  //   return Err({ type: "invalid_session_cookie" } as const);
+  // }
 
+  // todo use cookies instead
   const query = getQuery(event);
-  const parsedQuery = Query.safeParse(query);
-
-  const sessionId = parsedCookie.success
-    ? parsedCookie.data
-    : parsedQuery.success
-    ? parsedQuery.data.sessionId
-    : null;
-
-  if (!sessionId) {
-    return Ok(null);
+  const parsed = z.object({ sessionId: SessionId }).safeParse(query);
+  if (!parsed.success) {
+    return Err({ type: "invalid_session_id_in_query" });
   }
 
   const foundSession = await db.session.findById({
-    id: sessionId,
+    id: parsed.data.sessionId,
   });
 
   if (foundSession.type === "Err") {
