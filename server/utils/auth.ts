@@ -14,7 +14,7 @@ export const getAuthSession = async (
   const found = await db.session.findById({ id: cookie });
 
   if (found.type === "Err") {
-    return found;
+    return Err({ type: "server_error", message: found.error } as const);
   }
 
   if (!found.data) {
@@ -38,11 +38,11 @@ export const getAuthAccount = async (
   });
 
   if (found.type === "Err") {
-    return found;
+    return Err({ type: "server_error", message: found.error } as const);
   }
 
   if (!found.data) {
-    return Err({ type: "account_not_found" });
+    return Err({ type: "account_not_found" } as const);
   }
 
   return Ok(found.data);

@@ -9,17 +9,12 @@ watch(name, () => {
   nameProblems.value = [];
 });
 
-const account = useAuthAccount();
+const problems = ref<string[]>([]);
 
 const create = async () => {
-  if (!account.value) {
-    return;
-  }
-
   status.value = "Loading";
 
   const body: SetlistPostBody = {
-    creatorId: account.value.id,
     name: name.value,
   };
 
@@ -28,10 +23,21 @@ const create = async () => {
     body,
   });
 
+  if (result.type === "Ok") {
+    status.value = "Ok";
+    console.log(result.data);
+    return;
+  }
+
   status.value = "Err";
 
   if (result.error.type === "validation") {
     nameProblems.value = result.error.name;
+    return;
+  }
+
+  if (result.error.type === "server_error") {
+    problems.value = [result.error.message];
     return;
   }
 };
@@ -55,6 +61,8 @@ const create = async () => {
           id="name"
           v-model="name"
           :problems="nameProblems" />
+
+        <Problems class="mt-2" :problems="problems" />
 
         <div class="mt-4">
           <Button

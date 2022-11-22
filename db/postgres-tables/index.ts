@@ -3,3 +3,4 @@
 
 export type { default as Accounts, AccountsInitializer, AccountsMutator, AccountsId } from './public/Accounts';
 export type { default as Sessions, SessionsInitializer, SessionsMutator, SessionsId } from './public/Sessions';
+export type { default as Setlists, SetlistsInitializer, SetlistsMutator, SetlistsId } from './public/Setlists';

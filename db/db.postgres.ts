@@ -1,7 +1,14 @@
 import pg from "pg";
 import { Err, Ok } from "../utils";
 import { Db } from "./db.interface";
-import { Accounts, AccountsId, Sessions, SessionsId } from "./postgres-tables";
+import {
+  Accounts,
+  AccountsId,
+  Sessions,
+  SessionsId,
+  Setlists,
+  SetlistsId,
+} from "./postgres-tables";
 
 //
 // https://node-postgres.com/features/connecting#environment-variables
@@ -142,6 +149,26 @@ export const db: Db = {
           passwordHash: row.password_hash,
         }))
       );
+    },
+  },
+
+  setlist: {
+    async insert(params) {
+      const row: Setlists = {
+        creator_id: params.setlist.creatorId,
+        id: params.setlist.id as SetlistsId,
+        name: params.setlist.name,
+      };
+
+      const result = await query(
+        `INSERT INTO setlists (id, name, creator_id) VALUES ('${row.id}', '${row.name}', '${row.creator_id}')`
+      );
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      return Ok(null);
     },
   },
 };
