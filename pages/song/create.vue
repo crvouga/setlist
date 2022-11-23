@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SetlistPostBody } from "~~/utils/setlist";
+import { SongPostBody } from "~~/utils";
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 
@@ -18,19 +18,19 @@ const create = async () => {
   problems.value = [];
   status.value = "Loading";
 
-  const body: SetlistPostBody = {
+  const body: SongPostBody = {
     name: name.value,
   };
 
-  const result = await $fetch("/api/setlist-create", {
+  const result = await $fetch("/api/song-create", {
     method: "POST",
     body,
   });
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    show({ message: "Setlist created" });
-    router.push(`/setlist/${result.data.id}`);
+    show({ message: "Song created" });
+    // router.push(`/setlist/${result.data.id}`);
     return;
   }
 

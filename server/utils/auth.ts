@@ -1,6 +1,11 @@
-import { sessionIdCookieName } from "~~/utils/session";
 import { db } from "~~/db";
-import { Ok, Err } from "~~/utils/result";
+import {
+  Err,
+  Ok,
+  ServerErr,
+  sessionIdCookieName,
+  UnauthorizedErr,
+} from "~~/utils";
 
 export const getAuthSession = async (
   event: Parameters<typeof getCookie>[0]
@@ -8,17 +13,17 @@ export const getAuthSession = async (
   const cookie = getCookie(event, sessionIdCookieName);
 
   if (!cookie) {
-    return Err({ type: "no_session_cookie" } as const);
+    return UnauthorizedErr("no session cookie");
   }
 
   const found = await db.session.findById({ id: cookie });
 
   if (found.type === "Err") {
-    return Err({ type: "server_error", message: found.error } as const);
+    return ServerErr(found.error);
   }
 
   if (!found.data) {
-    return Err({ type: "session_not_found" } as const);
+    return UnauthorizedErr("no session record");
   }
 
   return Ok(found.data);
@@ -38,7 +43,7 @@ export const getAuthAccount = async (
   });
 
   if (found.type === "Err") {
-    return Err({ type: "server_error", message: found.error } as const);
+    return ServerErr(found.error);
   }
 
   if (!found.data) {

@@ -4,6 +4,8 @@ import {
   Session,
   Setlist,
   SetlistFindByIdPayload,
+  SongId,
+  SongName,
 } from "~~/utils";
 
 export type Db = {
@@ -44,6 +46,14 @@ export type Db = {
     insert: (params: {
       setlistId: string;
       accountId: string;
+    }) => Promise<Result<string, null>>;
+  };
+
+  song: {
+    insert: (params: {
+      name: SongName;
+      id: SongId;
+      creatorId: string;
     }) => Promise<Result<string, null>>;
   };
 };

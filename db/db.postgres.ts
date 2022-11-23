@@ -2,13 +2,12 @@ import pg from "pg";
 import { v4 } from "uuid";
 import { z } from "zod";
 import {
-  SetlistName,
+  AccountId,
   Err,
   Ok,
-  Setlist,
-  SetlistId,
-  AccountId,
   SetlistFindByIdPayload,
+  SetlistId,
+  SetlistName,
 } from "../utils";
 import { Db } from "./db.interface";
 import {
@@ -20,6 +19,8 @@ import {
   SessionsId,
   Setlists,
   SetlistsId,
+  Songs,
+  SongsId,
 } from "./postgres-tables";
 
 //
@@ -292,6 +293,25 @@ export const db: Db = {
 
       const result = await query(
         `INSERT INTO accounts_setlists (id, account_id, setlist_id) VALUES ('${row.id}', '${row.account_id}', '${row.setlist_id}')`
+      );
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      return Ok(null);
+    },
+  },
+  song: {
+    async insert(params) {
+      const row: Songs = {
+        creator_id: params.creatorId,
+        id: params.id as SongsId,
+        name: params.name,
+      };
+
+      const result = await query(
+        `INSERT INTO songs (id, creator_id, name) VALUES ('${row.id}', '${row.creator_id}', '${row.name}')`
       );
 
       if (result.type === "Err") {
