@@ -30,7 +30,7 @@ const create = async () => {
   if (result.type === "Ok") {
     status.value = "Ok";
     show({ message: "Song created" });
-    // router.push(`/setlist/${result.data.id}`);
+    router.back();
     return;
   }
 

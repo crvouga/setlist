@@ -2,9 +2,9 @@
 defineProps<{ problems: string[] }>();
 </script>
 <template>
-  <ul>
-    <li v-for="problem in problems" class="text-danger" v-bind:key="problem">
+  <div class="d-flex flex-column">
+    <div v-for="problem in problems" class="text-danger" v-bind:key="problem">
       {{ problem }}
-    </li>
-  </ul>
+    </div>
+  </div>
 </template>

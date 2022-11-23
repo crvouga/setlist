@@ -19,6 +19,8 @@ import {
   SessionsId,
   Setlists,
   SetlistsId,
+  SetlistsSongs,
+  SetlistsSongsId,
   Songs,
   SongsId,
 } from "./postgres-tables";
@@ -318,6 +320,39 @@ export const db: Db = {
         return result;
       }
 
+      return Ok(null);
+    },
+
+    async search(params) {
+      const result = await query<Songs>(
+        `SELECT * FROM songs WHERE name LIKE '%${params.name}%'`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(
+        result.data.map((row) => ({
+          id: row.id,
+          name: row.name,
+          creatorId: row.creator_id,
+        }))
+      );
+    },
+  },
+
+  setlist_song: {
+    async insert(params) {
+      const row: SetlistsSongs = {
+        id: v4() as SetlistsSongsId,
+        setlist_id: params.setlistId as SetlistsId,
+        song_id: params.songId as SongsId,
+      };
+      const result = await query(
+        `INSERT INTO setlists_songs (id, setlist_id, song_id) VALUES ('${row.id}', '${row.setlist_id}', '${row.song_id}')`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
       return Ok(null);
     },
   },

@@ -7,7 +7,8 @@ type Name =
   | "eye-slash"
   | "logout"
   | "plus"
-  | "account";
+  | "account"
+  | "search";
 
 defineProps<{
   name: Name;
@@ -22,6 +23,7 @@ const nameToClass: { [name in Name]: string } = {
   login: "bi-door-open-fill",
   logout: "bi-door-closed-fill",
   plus: "bi-plus",
+  search: "bi-search",
 };
 </script>
 
