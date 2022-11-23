@@ -3,7 +3,7 @@ import { AccountId } from "./account";
 
 export const SetlistName = z.string().min(4);
 
-const SetlistId = z.string().uuid();
+export const SetlistId = z.string().uuid();
 
 export const Setlist = z.object({
   id: SetlistId,
@@ -22,3 +22,22 @@ export const SetlistPostBody = z.object({
   name: SetlistName,
 });
 export type SetlistPostBody = z.infer<typeof SetlistPostBody>;
+
+//
+//
+// Get
+//
+//
+
+export const SetlistFindById = z.object({ id: SetlistId });
+export type SetlistFindById = z.infer<typeof SetlistFindById>;
+export const SetlistFindByIdPayload = z.object({
+  setlistId: SetlistId,
+  setlistName: SetlistName,
+  creatorId: AccountId,
+  creatorEmail: z.string().email(),
+});
+export type SetlistFindByIdPayload = z.infer<typeof SetlistFindByIdPayload>;
+
+export const SetlistFindByAccountId = z.object({ accountId: AccountId });
+export type SetlistFindByAccountId = z.infer<typeof SetlistFindByAccountId>;

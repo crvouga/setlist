@@ -1,7 +1,10 @@
-import { Result } from "~~/utils";
-import { Account, AccountWithPassword } from "~~/utils/account";
-import { Session } from "~~/utils/session";
-import { Setlist } from "~~/utils/setlist";
+import {
+  AccountWithPassword,
+  Result,
+  Session,
+  Setlist,
+  SetlistFindByIdPayload,
+} from "~~/utils";
 
 export type Db = {
   account: {
@@ -29,6 +32,12 @@ export type Db = {
 
   setlist: {
     insert: (params: { setlist: Setlist }) => Promise<Result<string, null>>;
+    findById: (params: {
+      id: string;
+    }) => Promise<Result<string, SetlistFindByIdPayload | null>>;
+    findByAccountId: (params: {
+      accountId: string;
+    }) => Promise<Result<string, Setlist[]>>;
   };
 
   account_setlist: {

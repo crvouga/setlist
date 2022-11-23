@@ -12,6 +12,7 @@ watch(name, () => {
 const problems = ref<string[]>([]);
 
 const router = useRouter();
+const { show } = useToast();
 
 const create = async () => {
   problems.value = [];
@@ -28,6 +29,7 @@ const create = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
+    show({ message: "Setlist created" });
     router.push(`/setlist/${result.data.id}`);
     return;
   }
@@ -47,12 +49,7 @@ const create = async () => {
 </script>
 
 <template>
-  <nav class="container p-2">
-    <NuxtLink to="/" class="btn btn-primary">
-      <Icon name="back" />
-      Back
-    </NuxtLink>
-  </nav>
+  <NavBarBack to="/" />
 
   <main class="container mt-2">
     <section class="row justify-content-center">

@@ -1,6 +1,15 @@
 import pg from "pg";
 import { v4 } from "uuid";
-import { Err, Ok } from "../utils";
+import { z } from "zod";
+import {
+  SetlistName,
+  Err,
+  Ok,
+  Setlist,
+  SetlistId,
+  AccountId,
+  SetlistFindByIdPayload,
+} from "../utils";
 import { Db } from "./db.interface";
 import {
   Accounts,
@@ -173,6 +182,81 @@ export const db: Db = {
   },
 
   setlist: {
+    async findByAccountId(params) {
+      const result = await query<unknown>(`
+        SELECT a_s.setlist_id, s.creator_id, a_s.account_id, a.email_address, s.name
+        FROM setlists s
+        JOIN accounts_setlists a_s ON s.id = a_s.setlist_id
+        JOIN accounts a ON a_s.account_id = a.id
+        WHERE a.id='${params.accountId}'
+      `);
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      const Row = z.object({
+        setlist_id: SetlistId,
+        account_id: AccountId,
+        creator_id: AccountId,
+        email_address: z.string().email(),
+        name: SetlistName,
+      });
+
+      const parsed = z.array(Row).safeParse(result.data);
+
+      if (!parsed.success) {
+        return Err("Failed to parse rows from database");
+      }
+
+      return Ok(
+        parsed.data.map((row) => ({
+          id: row.setlist_id,
+          creatorId: row.creator_id,
+          name: row.name,
+        }))
+      );
+    },
+
+    async findById(params) {
+      const result = await query<unknown>(`
+        SELECT *
+        FROM setlists
+        JOIN accounts ON setlists.creator_id = accounts.id
+        WHERE setlists.id='${params.id}'
+      `);
+
+      if (result.type === "Err") {
+        return result;
+      }
+
+      const Row = z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        creator_id: z.string().uuid(),
+        email_address: z.string().email(),
+        password_hash: z.string(),
+      });
+
+      const parsed = z.array(Row).safeParse(result.data);
+
+      if (!parsed.success) {
+        return Err("Database Error! Unexpected shape");
+      }
+
+      const payload =
+        parsed.data.map(
+          (row): SetlistFindByIdPayload => ({
+            creatorId: row.creator_id,
+            creatorEmail: row.email_address,
+            setlistId: row.id,
+            setlistName: row.name,
+          })
+        )[0] ?? null;
+
+      return Ok(payload);
+    },
+
     async insert(params) {
       const row: Setlists = {
         creator_id: params.setlist.creatorId,
