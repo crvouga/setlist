@@ -47,7 +47,7 @@ onMounted(() => {
   <main class="container mt-2">
     <section class="row justify-content-center">
       <div class="col-12 d-flex align-items-center justify-content-end">
-        <NuxtLink :to="{ name: 'setlist-create' }" class="btn btn-primary">
+        <NuxtLink :to="`/setlist/create`" class="btn btn-primary">
           <Icon name="plus" />
           Create New
         </NuxtLink>
