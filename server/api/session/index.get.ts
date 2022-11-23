@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const parsed = z.object({ sessionId: SessionId }).safeParse(query);
   if (!parsed.success) {
-    return Err({ type: "invalid_session_id_in_query" });
+    return ValidationErr({ sessionId: "invalid session id" });
   }
 
   const foundSession = await db.session.findById({

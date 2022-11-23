@@ -7,7 +7,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "start": "node .output/server/index.mjs",
-    "tables": "npx kanel"
+    "tables": "npx kanel",
+    "tc": "npx nuxi typecheck"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

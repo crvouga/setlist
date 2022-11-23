@@ -2,11 +2,11 @@
 const router = useRouter();
 
 const logout = async () => {
-  const result = await $fetch("/api/session-logout", {
-    method: "POST",
+  const result = await $fetch("/api/session/logout", {
+    method: "DELETE",
   });
   if (result.type === "Ok") {
-    router.push({ name: "session-login" });
+    router.push("/session/create");
     return;
   }
 };

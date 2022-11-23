@@ -20,7 +20,7 @@ const load = async () => {
     return;
   }
   status.value = "Err";
-  if (result.error.type === "invalid_query") {
+  if (result.error.type === "validation") {
     problems.value = ["Server did not understand request"];
     return;
   }

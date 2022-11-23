@@ -18,7 +18,7 @@ watch(pass, () => {
 const login = async () => {
   status.value = "Loading";
 
-  const result = await $fetch("/api/session-login", {
+  const result = await $fetch("/api/session/login", {
     method: "POST",
     body: {
       email: email.value,
@@ -42,13 +42,13 @@ const login = async () => {
     return;
   }
 
-  if (result.error.type === "database") {
+  if (result.error.type === "server_error") {
     status.value = "Err";
     problems.value = [result.error.message];
     return;
   }
 
-  if (result.error.type === "account_does_not_exists") {
+  if (result.error.type === "not_found") {
     status.value = "Err";
     emailProblems.value = [
       `Can't find account using this email. Try creating an account.`,
@@ -125,9 +125,7 @@ const login = async () => {
 
       <div class="d-flex flex-column justify-content-center py-5">
         <p class="h6 text-center text-muted">Don't have an account?</p>
-        <NuxtLink
-          :to="{ name: 'account-create' }"
-          class="btn btn-sm btn-outline-primary">
+        <NuxtLink to="/account/create" class="btn btn-sm btn-outline-primary">
           <Icon name="create-account" />
           Create New Account
         </NuxtLink>

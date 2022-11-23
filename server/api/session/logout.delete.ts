@@ -1,6 +1,6 @@
 import { db } from "~~/db";
 import { Ok, ServerErr, sessionIdCookieName } from "~~/utils";
-import { getAuthSession } from "../utils/auth";
+import { getAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const found = await getAuthSession(event);

@@ -14,11 +14,11 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   }
 
   // prevents infinite loop
-  if (to.path === "/session-login" || to.path === "/account-create") {
+  if (to.path === "/session/create" || to.path === "/account/create") {
     return;
   }
 
   if (authAccount.value === null) {
-    return navigateTo({ name: "session-login" });
+    return navigateTo("/session/create");
   }
 });

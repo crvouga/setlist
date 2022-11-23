@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (inserted.type === "Err") {
-    return Err({ type: "database", message: inserted.error } as const);
+    return ServerErr(inserted.error);
   }
 
   // todo get cookies working
