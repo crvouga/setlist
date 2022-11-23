@@ -8,7 +8,6 @@ const { toast } = useToast();
       <div class="toast-container position-absolute p-3" id="toastPlacement">
         <div class="toast">
           <div class="toast-header">
-            <img src="..." class="rounded me-2" alt="..." />
             <strong class="me-auto">Bootstrap</strong>
             <small>11 mins ago</small>
           </div>
