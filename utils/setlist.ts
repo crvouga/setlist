@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AccountId } from "./account";
+import { SongId, SongName } from "./song";
 
 export const SetlistName = z.string().min(4);
 
@@ -36,6 +37,12 @@ export const SetlistFindByIdPayload = z.object({
   setlistName: SetlistName,
   creatorId: AccountId,
   creatorEmail: z.string().email(),
+  songs: z.array(
+    z.object({
+      id: SongId,
+      name: SongName,
+    })
+  ),
 });
 export type SetlistFindByIdPayload = z.infer<typeof SetlistFindByIdPayload>;
 
