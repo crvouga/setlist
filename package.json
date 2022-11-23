@@ -27,6 +27,7 @@
     "pg": "^8.8.0",
     "supertokens-web-js": "^0.3.0",
     "uuid": "^9.0.0",
+    "vuedraggable": "^4.1.0",
     "zod": "^3.19.1"
   }
 }

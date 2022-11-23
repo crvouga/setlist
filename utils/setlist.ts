@@ -39,7 +39,8 @@ export const SetlistFindByIdPayload = z.object({
   creatorEmail: z.string().email(),
   songs: z.array(
     z.object({
-      id: SongId,
+      id: z.string().uuid(),
+      songId: SongId,
       name: SongName,
     })
   ),

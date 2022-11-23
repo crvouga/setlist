@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 type Name =
+  | "hamburger"
   | "back"
   | "login"
   | "create-account"
@@ -24,6 +25,7 @@ const nameToClass: { [name in Name]: string } = {
   logout: "bi-door-closed-fill",
   plus: "bi-plus",
   search: "bi-search",
+  hamburger: "bi-list",
 };
 </script>
 

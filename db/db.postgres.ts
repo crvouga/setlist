@@ -20,7 +20,6 @@ import {
   Setlists,
   SetlistsSetlistId,
   SetlistsSongs,
-  SetlistsSongsId,
   Songs,
   SongsSongId,
 } from "./postgres-tables";
@@ -226,29 +225,27 @@ export const db: Db = {
     async findById(params) {
       const result = await query<unknown>(`
         SELECT *
-        FROM setlists
-        JOIN accounts ON setlists.creator_id = accounts.account_id
-        WHERE setlists.setlist_id='${params.id}'
+        FROM setlists sl
+        JOIN accounts a ON sl.creator_id = a.account_id
+        JOIN setlists_songs sl_s ON sl_s.setlist_id = sl.setlist_id
+        JOIN songs s ON sl_s.song_id = s.song_id
+        WHERE sl.setlist_id='${params.id}'
+        ORDER BY sl_s.ordering ASC, sl_s.updated_at DESC
       `);
-      /* 
-      
-      SELECT setlists.name as setlist_name, songs.name, set
-FROM setlists
-JOIN accounts ON setlists.creator_id = accounts.id
-JOIN setlists_songs ON setlists_songs.setlist_id = setlists.id
-JOIN songs ON setlists_songs.song_id = songs.id
-      */
 
       if (result.type === "Err") {
         return result;
       }
 
       const Row = z.object({
+        setlists_songs_id: z.string().uuid(),
         setlist_id: z.string().uuid(),
         setlist_name: z.string(),
         creator_id: z.string().uuid(),
         email_address: z.string().email(),
         password_hash: z.string(),
+        song_name: z.string(),
+        song_id: z.string(),
       });
 
       const parsed = z.array(Row).safeParse(result.data);
@@ -259,16 +256,27 @@ JOIN songs ON setlists_songs.song_id = songs.id
         );
       }
 
-      const payload =
-        parsed.data.map(
-          (row): SetlistFindByIdPayload => ({
-            creatorId: row.creator_id,
-            creatorEmail: row.email_address,
-            setlistId: row.setlist_id,
-            setlistName: row.setlist_name,
-            songs: [],
-          })
-        )[0] ?? null;
+      // todo some how put this in the database query
+      const byId: { [setlistId: string]: SetlistFindByIdPayload } = {};
+      for (const row of parsed.data) {
+        const songs = byId[row.setlist_id]?.songs ?? [];
+        byId[row.setlist_id] = {
+          creatorEmail: row.email_address,
+          creatorId: row.creator_id,
+          setlistId: row.setlist_id,
+          setlistName: row.setlist_name,
+          songs: [
+            ...songs,
+            {
+              id: row.setlists_songs_id,
+              songId: row.song_id,
+              name: row.song_name,
+            },
+          ],
+        };
+      }
+
+      const payload = byId[params.id] ?? null;
 
       return Ok(payload);
     },
@@ -356,12 +364,14 @@ JOIN songs ON setlists_songs.song_id = songs.id
   setlist_song: {
     async insert(params) {
       const row: SetlistsSongs = {
-        id: v4() as SetlistsSongsId,
+        setlists_songs_id: v4() as SetlistsSongs["setlists_songs_id"],
         setlist_id: params.setlistId as SetlistsSetlistId,
         song_id: params.songId as SongsSongId,
+        ordering: 0,
+        updated_at: new Date(),
       };
       const result = await query(
-        `INSERT INTO setlists_songs (id, setlist_id, song_id) VALUES ('${row.id}', '${row.setlist_id}', '${row.song_id}')`
+        `INSERT INTO setlists_songs (setlists_songs_id, setlist_id, song_id, ordering) VALUES ('${row.setlists_songs_id}', '${row.setlist_id}', '${row.song_id}', ${row.ordering})`
       );
       if (result.type === "Err") {
         return result;
