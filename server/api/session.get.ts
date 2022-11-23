@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { db } from "~~/db";
-import { Err, Ok } from "~~/utils";
-import { Account } from "~~/utils/account";
-import { SessionId } from "~~/utils/session";
+import { Account, Err, Ok, ServerErr, SessionId } from "~~/utils";
 
 export default defineEventHandler(async (event) => {
   // todo get this working
@@ -27,7 +25,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (foundSession.type === "Err") {
-    return Err({ type: "server_error", message: foundSession.error } as const);
+    return ServerErr(foundSession.error);
   }
 
   if (!foundSession.data) {
@@ -39,7 +37,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (foundAccount.type === "Err") {
-    return Err({ type: "server_error", message: foundAccount.error } as const);
+    return ServerErr(foundAccount.error);
   }
 
   if (!foundAccount.data) {

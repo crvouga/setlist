@@ -1,14 +1,16 @@
 import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
-import { Err, Ok } from "~~/utils";
 import {
-  Account,
   AccountWithPassword,
   Email,
+  Err,
   hashPassword,
+  Ok,
   Password,
-} from "~~/utils/account";
+  ServerErr,
+  ValidationErr,
+} from "~~/utils";
 
 const Body = z.object({
   email: Email,
@@ -22,20 +24,16 @@ export default defineEventHandler(async (event) => {
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.formErrors.fieldErrors;
-    return Err({
-      type: "validation",
+    return ValidationErr({
       email: fieldErrors.email ?? [],
       pass: fieldErrors.pass ?? [],
-    } as const);
+    });
   }
 
   const found = await db.account.findByEmail({ email: parsed.data.email });
 
   if (found.type === "Err") {
-    return Err({
-      type: "server_error",
-      message: found.error,
-    } as const);
+    return ServerErr(found.error);
   }
 
   if (found.data.length > 0) {
@@ -48,10 +46,7 @@ export default defineEventHandler(async (event) => {
   const hashed = await hashPassword(parsed.data.pass);
 
   if (hashed.type === "Err") {
-    return Err({
-      type: "server_error",
-      message: hashed.error,
-    } as const);
+    return ServerErr(hashed.error);
   }
 
   const accountNew: AccountWithPassword = {
@@ -63,10 +58,7 @@ export default defineEventHandler(async (event) => {
   const inserted = await db.account.insert({ account: accountNew });
 
   if (inserted.type === "Err") {
-    return Err({
-      type: "server_error",
-      message: inserted.error,
-    } as const);
+    return ServerErr(inserted.error);
   }
 
   return Ok(null);

@@ -1,9 +1,17 @@
 import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
-import { Email, isCorrectPassword, Password } from "~~/utils/account";
-import { Err, Ok } from "~~/utils/result";
-import { sessionIdCookieName, Session } from "~~/utils/session";
+import {
+  ServerErr,
+  ValidationErr,
+  Email,
+  Err,
+  isCorrectPassword,
+  Ok,
+  Password,
+  Session,
+  sessionIdCookieName,
+} from "~~/utils";
 
 const Body = z.object({
   email: Email,
@@ -17,23 +25,22 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     const fieldErrors = parsed.error.formErrors.fieldErrors;
 
-    return Err({
-      type: "validation",
+    return ValidationErr({
       email: fieldErrors.email ?? [],
       pass: fieldErrors.pass ?? [],
-    } as const);
+    });
   }
 
   const found = await db.account.findByEmail({ email: parsed.data.email });
 
   if (found.type === "Err") {
-    return Err({ type: "database", message: found.error } as const);
+    return ServerErr(found.error);
   }
 
   const account = found.data[0];
 
   if (!account) {
-    return Err({ type: "account_does_not_exists" } as const);
+    return NotFoundErr("account not found");
   }
 
   if (
@@ -56,7 +63,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (deleted.type === "Err") {
-    return Err({ type: "database", message: deleted.error } as const);
+    return ServerErr(deleted.error);
   }
 
   const inserted = await db.session.insert({
@@ -67,6 +74,7 @@ export default defineEventHandler(async (event) => {
     return Err({ type: "database", message: inserted.error } as const);
   }
 
+  // todo get cookies working
   setCookie(event, sessionIdCookieName, sessionNew.id, {
     // todo get httpOnly session cookie working
     // httpOnly: true,
@@ -74,5 +82,9 @@ export default defineEventHandler(async (event) => {
     // sameSite: "strict",
   });
 
-  return Ok({ sessionId: sessionNew.id, id: account.id, email: account.email });
+  return Ok({
+    sessionId: sessionNew.id,
+    id: account.id,
+    email: account.email,
+  });
 });

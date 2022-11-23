@@ -1,6 +1,5 @@
 import { v4 } from "uuid";
-import { Err, Ok } from "~/utils/result";
-import { Setlist, SetlistPostBody } from "~/utils/setlist";
+import { Ok, Setlist, SetlistPostBody, ValidationErr } from "~/utils";
 import { db } from "~~/db";
 import { getAuthAccount } from "../utils/auth";
 
@@ -10,10 +9,7 @@ export default defineEventHandler(async (event) => {
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.formErrors.fieldErrors;
-    return Err({
-      type: "validation",
-      name: fieldErrors.name ?? [],
-    } as const);
+    return ValidationErr({ name: fieldErrors.name ?? [] });
   }
 
   const foundAccount = await getAuthAccount(event);
@@ -31,7 +27,7 @@ export default defineEventHandler(async (event) => {
   const parsedSetlist = Setlist.safeParse(dirty);
 
   if (!parsedSetlist.success) {
-    return Err({ type: "failed_to_make_valid_setlist" } as const);
+    return ServerErr("Failed to make a valid setlist");
   }
 
   const inserted = await db.setlist.insert({
@@ -39,7 +35,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (inserted.type === "Err") {
-    return Err({ type: "server_error", message: inserted.error } as const);
+    return ServerErr(inserted.error);
   }
 
   return Ok(parsedSetlist.data);

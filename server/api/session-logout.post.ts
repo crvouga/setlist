@@ -1,6 +1,5 @@
 import { db } from "~~/db";
-import { Err, Ok } from "~~/utils";
-import { sessionIdCookieName } from "~~/utils/session";
+import { Ok, ServerErr, sessionIdCookieName } from "~~/utils";
 import { getAuthSession } from "../utils/auth";
 
 export default defineEventHandler(async (event) => {
@@ -10,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }
   const deleted = await db.session.deleteById({ id: found.data.id });
   if (deleted.type === "Err") {
-    return Err({ type: "server_error", message: deleted.error } as const);
+    return ServerErr(deleted.error);
   }
   setCookie(event, sessionIdCookieName, "");
   return Ok(null);
