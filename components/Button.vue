@@ -1,28 +1,34 @@
 <script lang="ts" setup>
-defineProps<{
+const { variant = "primary", size = "md" } = defineProps<{
   loading?: boolean;
   variant?: "primary" | "secondary";
   size?: "xs" | "sm" | "md" | "lg";
+  linkTo?: string;
 }>();
+
+const className = [
+  "btn d-flex justify-content-center align-items-center gap-2 position-relative fw-bold",
+  {
+    "btn-primary": variant === "primary",
+    "btn-secondary": variant === "secondary",
+    "btn-lg": size === "lg",
+    "btn-md": size === "md",
+    "btn-sm": size === "sm",
+    "btn-xs": size === "xs",
+  },
+];
 </script>
+
 <template>
-  <button
-    class="btn d-flex justify-content-center align-items-center gap-2 position-relative"
-    :disabled="loading"
-    :class="{
-      'btn-primary': variant === 'primary',
-      'btn-secondary': variant === 'secondary',
-      'btn-lg': size === 'lg',
-      'btn-md': size === 'md',
-      'btn-sm': size === 'sm',
-      'btn-xs': size === 'xs',
-    }">
+  <NuxtLink v-if="linkTo" :to="linkTo" :class="className">
+    <slot />
+  </NuxtLink>
+  <button v-else :disabled="loading" :class="className">
     <div
       v-if="loading"
       class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
       <div class="spinner-border" style="width: 1.75rem; height: 1.75rem" />
     </div>
-
     <slot :class="{ 'opacity-0': loading }" />
   </button>
 </template>

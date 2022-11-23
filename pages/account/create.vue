@@ -106,10 +106,10 @@ const createAccount = async () => {
     <!--  -->
     <div class="d-flex flex-column justify-content-center py-5">
       <p class="h6 text-center text-muted">Already have an account?</p>
-      <NuxtLink to="/session/create" class="btn btn-sm btn-outline-primary">
+      <Button linkTo="/session/create" class="btn-outline-primary">
         <Icon name="login" />
         Login
-      </NuxtLink>
+      </Button>
     </div>
   </main>
 </template>

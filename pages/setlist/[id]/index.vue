@@ -54,12 +54,10 @@ onMounted(() => {
           <h1 class="m-0 fw-bold" style="font-size: 2.5rem">
             {{ data.setlistName }}
           </h1>
-          <NuxtLink
-            :to="`/setlist/${id}/add-song`"
-            class="fw-bold btn btn-primary">
+          <Button :linkTo="`/setlist/${id}/add-song`">
             <Icon name="plus" class="mr-1" />
             Add Song
-          </NuxtLink>
+          </Button>
         </div>
 
         <pre>

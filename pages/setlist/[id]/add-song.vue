@@ -4,10 +4,10 @@
     <div class="row">
       <div class="col-12 d-flex justify-content-between align-items-center">
         <h1 class="m-0">Add Song</h1>
-        <NuxtLink to="/song/create" class="btn btn-primary">
+        <Button linkTo="/song/create">
           <Icon name="plus" />
           Create Song
-        </NuxtLink>
+        </Button>
       </div>
     </div>
 

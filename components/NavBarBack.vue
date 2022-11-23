@@ -4,10 +4,12 @@ defineProps<{
 }>();
 </script>
 <template>
-  <nav class="container p-2">
-    <NuxtLink :to="to" class="btn btn-primary">
-      <Icon name="back" />
-      Back
-    </NuxtLink>
+  <nav class="container">
+    <div class="row p-2">
+      <Button class="w-auto" :linkTo="to">
+        <Icon name="back" />
+        Back
+      </Button>
+    </div>
   </nav>
 </template>

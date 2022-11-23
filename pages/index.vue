@@ -38,19 +38,19 @@ onMounted(() => {
     class="w-100 d-flex container px-3 py-2 align-items-center justify-content-between bg-light sticky-top">
     <Logo class="fs-1 mb-0" />
 
-    <NuxtLink to="/account" class="btn btn-outline-primary">
+    <Button linkTo="/account">
       <Icon name="account" />
       Account
-    </NuxtLink>
+    </Button>
   </nav>
 
   <main class="container mt-2">
     <section class="row justify-content-center">
       <div class="col-12 d-flex align-items-center justify-content-end">
-        <NuxtLink :to="`/setlist/create`" class="btn btn-primary">
+        <Button :linkTo="`/setlist/create`">
           <Icon name="plus" />
           Create New
-        </NuxtLink>
+        </Button>
       </div>
       <div v-if="status === 'Loading'" class="row justify-content-center mt-4">
         <Spinner class="col-12" />

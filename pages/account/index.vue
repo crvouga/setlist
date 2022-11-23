@@ -13,10 +13,10 @@ const logout = async () => {
 </script>
 <template>
   <nav class="container fw-bold p-2">
-    <NuxtLink to="/" class="btn btn-primary">
+    <Button linkTo="/">
       <Icon name="back" />
       Back
-    </NuxtLink>
+    </Button>
   </nav>
   <main class="container fw-bold">
     <h1 class="fs-1">Account</h1>
