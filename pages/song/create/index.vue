@@ -69,7 +69,7 @@ const create = async () => {
 
         <label for="artistSearch" class="form-label mt-3">Artist</label>
 
-        <NuxtLink to="/song/create/artist-search">
+        <NuxtLink to="/song/create/add-artist">
           <div
             class="p-2 bg-white border rounded d-flex flex-row justify-content-between"
             id="artistSearch">
