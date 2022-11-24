@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 type Name =
+  | "chevron-right"
   | "hamburger"
   | "back"
   | "login"
@@ -17,6 +18,7 @@ defineProps<{
 
 const nameToClass: { [name in Name]: string } = {
   back: "bi-chevron-left",
+  "chevron-right": "bi-chevron-right",
   "create-account": "bi-person-plus-fill",
   account: "bi-person-fill",
   "eye-slash": "bi-eye-slash-fill",

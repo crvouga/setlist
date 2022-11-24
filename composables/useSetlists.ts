@@ -4,7 +4,7 @@ export const useSetlists = () => {
   const setlists = useState<Setlist[]>("setlists", () => []);
 
   const createOne = async (body: { name: string; creatorId: string }) => {
-    const result = await $fetch("/api/setlist-create", {
+    const result = await $fetch("/api/setlist/create", {
       method: "POST",
       body: {},
     });

@@ -573,6 +573,11 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
+"@trevoreyre/autocomplete-vue@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@trevoreyre/autocomplete-vue/-/autocomplete-vue-2.3.0.tgz#ecf30c1ab49e022949eb66ca53e12e4e70370c63"
+  integrity sha512-jTrdpVq0hBoE5RLFUMY8sNwdZt2/GlG/ay8yXE7pHRySJa8NmeEiOd+vnl3NodNiPVkJgWGMo9oDGqeWzt/JcQ==
+
 "@trysound/sax@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"

@@ -25,7 +25,7 @@ const load = async () => {
     setlistId: id,
   };
 
-  const result = await $fetch("/api/setlist-by-id", {
+  const result = await $fetch("/api/setlist/by-id", {
     query: query,
   });
   if (result.type === "Ok") {

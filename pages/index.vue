@@ -9,7 +9,7 @@ const load = async () => {
     return;
   }
   status.value = "Loading";
-  const result = await $fetch("/api/setlist-by-account-id", {
+  const result = await $fetch("/api/setlist/by-account-id", {
     query: {
       accountId: account.value.accountId,
     },

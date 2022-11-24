@@ -4,11 +4,13 @@ import { SongPostBody } from "~~/utils";
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 
-const name = ref("");
+const name = useState("song-name", () => "");
 const nameProblems = ref<string[]>([]);
 watch(name, () => {
   nameProblems.value = [];
 });
+
+const artistSearch = ref("");
 
 const problems = ref<string[]>([]);
 
@@ -24,7 +26,7 @@ const create = async () => {
     artistId: v4(),
   };
 
-  const result = await $fetch("/api/song-create", {
+  const result = await $fetch("/api/song/create", {
     method: "POST",
     body,
   });
@@ -60,9 +62,21 @@ const create = async () => {
 
         <TextField
           label="Name"
+          placeholder="Song name"
           id="name"
           v-model="name"
           :problems="nameProblems" />
+
+        <label for="artistSearch" class="form-label mt-3">Artist</label>
+
+        <NuxtLink to="/song/create/artist-search">
+          <div
+            class="p-2 bg-white border rounded d-flex flex-row justify-content-between"
+            id="artistSearch">
+            <p class="m-0 text-muted">Select artist</p>
+            <Icon class="text-black" name="chevron-right" />
+          </div>
+        </NuxtLink>
 
         <Problems class="mt-2" :problems="problems" />
 

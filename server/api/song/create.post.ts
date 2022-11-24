@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { db } from "~~/db";
 import { Ok, ServerErr, Song, SongPostBody, ValidationErr } from "~~/utils";
-import { getAuthSession } from "../utils/auth";
+import { getAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

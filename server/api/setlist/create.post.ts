@@ -7,7 +7,7 @@ import {
   ValidationErr,
 } from "~/utils";
 import { db } from "~~/db";
-import { getAuthAccount } from "../utils/auth";
+import { getAuthAccount } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

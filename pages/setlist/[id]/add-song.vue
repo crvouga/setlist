@@ -20,7 +20,7 @@ const { show } = useToast();
 const addSong = async ({ songId }: { songId: SongId }) => {
   status.value = "Loading";
   const setlistId = route.params.id;
-  const result = await $fetch("/api/setlist-item", {
+  const result = await $fetch("/api/setlist-item/create", {
     method: "POST",
     body: {
       setlistId,

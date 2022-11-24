@@ -22,7 +22,7 @@ const create = async () => {
     setlistName: name.value,
   };
 
-  const result = await $fetch("/api/setlist-create", {
+  const result = await $fetch("/api/setlist/create", {
     method: "POST",
     body,
   });
