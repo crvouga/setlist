@@ -12,12 +12,8 @@ const logout = async () => {
 };
 </script>
 <template>
-  <nav class="container fw-bold p-2">
-    <Button linkTo="/">
-      <Icon name="back" />
-      Back
-    </Button>
-  </nav>
+  <NavBarBack to="/" />
+
   <main class="container fw-bold">
     <h1 class="fs-1">Account</h1>
 

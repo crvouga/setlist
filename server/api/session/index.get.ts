@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "~~/db";
-import { Account, Err, Ok, ServerErr, SessionId } from "~~/utils";
+import { Ok, ServerErr, SessionId, ValidationErr } from "~~/utils";
 
 export default defineEventHandler(async (event) => {
   // todo get this working

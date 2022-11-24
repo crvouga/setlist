@@ -1,5 +1,5 @@
 import { db } from "~~/db";
-import { Ok, ServerErr, SongSearchQuery } from "~~/utils";
+import { Ok, ValidationErr, ServerErr, SongSearchQuery } from "~~/utils";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
