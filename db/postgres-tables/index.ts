@@ -3,7 +3,9 @@
 
 export type { default as Accounts, AccountsInitializer, AccountsMutator, AccountsAccountId } from './public/Accounts';
 export type { default as Sessions, SessionsInitializer, SessionsMutator, SessionsSessionId } from './public/Sessions';
+export type { default as Passwords, PasswordsInitializer, PasswordsMutator, PasswordsPasswordId } from './public/Passwords';
 export type { default as Setlists, SetlistsInitializer, SetlistsMutator, SetlistsSetlistId } from './public/Setlists';
-export type { default as AccountsSetlists, AccountsSetlistsInitializer, AccountsSetlistsMutator, AccountsSetlistsId } from './public/AccountsSetlists';
+export type { default as Artists, ArtistsInitializer, ArtistsMutator, ArtistsArtistId } from './public/Artists';
 export type { default as Songs, SongsInitializer, SongsMutator, SongsSongId } from './public/Songs';
-export type { default as SetlistsSongs, SetlistsSongsInitializer, SetlistsSongsMutator, SetlistsSongsSetlistsSongsId } from './public/SetlistsSongs';
+export type { default as SetlistItems, SetlistItemsInitializer, SetlistItemsMutator, SetlistItemsSetlistItemId } from './public/SetlistItems';
+export type { default as SetlistAccounts, SetlistAccountsInitializer, SetlistAccountsMutator, SetlistAccountsSetlistAccountId } from './public/SetlistAccounts';

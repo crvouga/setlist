@@ -7,7 +7,9 @@ export default defineEventHandler(async (event) => {
   if (found.type === "Err") {
     return found;
   }
-  const deleted = await db.session.deleteById({ id: found.data.id });
+  const deleted = await db.session.deleteById({
+    sessionId: found.data.sessionId,
+  });
   if (deleted.type === "Err") {
     return ServerErr(deleted.error);
   }

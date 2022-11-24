@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { variant = "primary", size = "md" } = defineProps<{
   loading?: boolean;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "primary-outlined";
   size?: "xs" | "sm" | "md" | "lg";
   linkTo?: string;
 }>();
@@ -9,6 +9,7 @@ const { variant = "primary", size = "md" } = defineProps<{
 const className = [
   "btn d-flex justify-content-center align-items-center gap-2 position-relative fw-bold",
   {
+    "btn-outline-primary": variant === "primary-outlined",
     "btn-primary": variant === "primary",
     "btn-secondary": variant === "secondary",
     "btn-lg": size === "lg",

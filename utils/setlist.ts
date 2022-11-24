@@ -7,11 +7,20 @@ export const SetlistName = z.string().min(4);
 export const SetlistId = z.string().uuid();
 
 export const Setlist = z.object({
-  id: SetlistId,
+  setlistId: SetlistId,
   creatorId: AccountId,
-  name: SetlistName,
+  setlistName: SetlistName,
 });
 export type Setlist = z.infer<typeof Setlist>;
+
+export const SetlistItemId = z.string().uuid();
+
+export const SetlistItem = z.object({
+  setlistItemId: SetlistItemId,
+  setlistId: SetlistId,
+  songId: SongId,
+});
+export type SetlistItem = z.infer<typeof SetlistItem>;
 
 //
 //
@@ -20,7 +29,7 @@ export type Setlist = z.infer<typeof Setlist>;
 //
 
 export const SetlistPostBody = z.object({
-  name: SetlistName,
+  setlistName: SetlistName,
 });
 export type SetlistPostBody = z.infer<typeof SetlistPostBody>;
 
@@ -30,18 +39,16 @@ export type SetlistPostBody = z.infer<typeof SetlistPostBody>;
 //
 //
 
-export const SetlistFindById = z.object({ id: SetlistId });
+export const SetlistFindById = z.object({ setlistId: SetlistId });
 export type SetlistFindById = z.infer<typeof SetlistFindById>;
 export const SetlistFindByIdPayload = z.object({
   setlistId: SetlistId,
   setlistName: SetlistName,
-  creatorId: AccountId,
-  creatorEmail: z.string().email(),
-  songs: z.array(
+  items: z.array(
     z.object({
-      id: z.string().uuid(),
+      setlistItemId: SetlistItemId,
       songId: SongId,
-      name: SongName,
+      songName: SongName,
     })
   ),
 });
@@ -49,3 +56,20 @@ export type SetlistFindByIdPayload = z.infer<typeof SetlistFindByIdPayload>;
 
 export const SetlistFindByAccountId = z.object({ accountId: AccountId });
 export type SetlistFindByAccountId = z.infer<typeof SetlistFindByAccountId>;
+
+//
+//
+//
+//
+
+export const SetlistItemPatchBody = z.object({
+  setlistItemId: SetlistItemId,
+  ordering: z.number().int().positive(),
+});
+export type SetlistItemPatchBody = z.infer<typeof SetlistItemPatchBody>;
+
+export const SetlistItemPostBody = z.object({
+  setlistId: SetlistId,
+  songId: SongId,
+});
+export type SetlistItemPostBody = z.infer<typeof SetlistItemPostBody>;

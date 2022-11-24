@@ -32,7 +32,7 @@ const createAccount = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    router.push("/login");
+    router.push("/session/create");
     return;
   }
 
@@ -106,7 +106,7 @@ const createAccount = async () => {
     <!--  -->
     <div class="d-flex flex-column justify-content-center py-5">
       <p class="h6 text-center text-muted">Already have an account?</p>
-      <Button linkTo="/session/create" class="btn-outline-primary">
+      <Button linkTo="/session/create" variant="primary-outlined">
         <Icon name="login" />
         Login
       </Button>

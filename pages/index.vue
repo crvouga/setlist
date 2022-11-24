@@ -11,7 +11,7 @@ const load = async () => {
   status.value = "Loading";
   const result = await $fetch("/api/setlist-by-account-id", {
     query: {
-      accountId: account.value.id,
+      accountId: account.value.accountId,
     },
   });
   if (result.type === "Ok") {
@@ -21,7 +21,9 @@ const load = async () => {
   }
   status.value = "Err";
   if (result.error.type === "validation") {
-    problems.value = ["Server did not understand request"];
+    problems.value = [
+      `Server did not understand request. ${result.error.accountId.join(", ")}`,
+    ];
     return;
   }
   if (result.error.type === "server_error") {
@@ -62,11 +64,11 @@ onMounted(() => {
         <div
           class="col-12 col-sm-6 col-md-4 col-lg-4 p-1"
           v-for="setlist in data"
-          v-bind:key="setlist.id">
-          <RouterLink :to="`/setlist/${setlist.id}`">
+          v-bind:key="setlist.setlistId">
+          <RouterLink :to="`/setlist/${setlist.setlistId}`">
             <div class="ratio ratio-16x9 border rounded w-100">
               <h3 class="h2 fw-bold text-truncate p-4">
-                {{ setlist.name }}
+                {{ setlist.setlistName }}
               </h3>
             </div>
           </RouterLink>

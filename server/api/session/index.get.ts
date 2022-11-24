@@ -20,9 +20,7 @@ export default defineEventHandler(async (event) => {
     return ValidationErr({ sessionId: "invalid session id" });
   }
 
-  const foundSession = await db.session.findById({
-    id: parsed.data.sessionId,
-  });
+  const foundSession = await db.session.findById(parsed.data);
 
   if (foundSession.type === "Err") {
     return ServerErr(foundSession.error);
@@ -44,11 +42,5 @@ export default defineEventHandler(async (event) => {
     return Ok(null);
   }
 
-  // making sure not to send over password hash
-  const account: Account = {
-    email: foundAccount.data.email,
-    id: foundAccount.data.id,
-  };
-
-  return Ok(account);
+  return Ok(foundAccount.data);
 });

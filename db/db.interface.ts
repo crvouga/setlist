@@ -1,25 +1,28 @@
 import {
-  AccountWithPassword,
   Result,
   Session,
   Setlist,
   SetlistFindByIdPayload,
   Song,
-  SongId,
-  SongName,
 } from "~~/utils";
 
 export type Db = {
   account: {
     findByEmail: (params: {
-      email: string;
-    }) => Promise<Result<string, AccountWithPassword[]>>;
+      accountEmail: string;
+    }) => Promise<
+      Result<string, { accountId: string; accountEmail: string }[]>
+    >;
     insert: (params: {
-      account: AccountWithPassword;
+      accountId: string;
+      passwordHash: string;
+      accountEmail: string;
     }) => Promise<Result<string, null>>;
     findById: (params: {
       id: string;
-    }) => Promise<Result<string, AccountWithPassword | null>>;
+    }) => Promise<
+      Result<string, { accountId: string; accountEmail: string } | null>
+    >;
   };
 
   session: {
@@ -28,41 +31,79 @@ export type Db = {
       accountId: string;
     }) => Promise<Result<string, null>>;
     findById: (params: {
-      id: string;
+      sessionId: string;
     }) => Promise<Result<string, Session | null>>;
-    deleteById: (params: { id: string }) => Promise<Result<string, null>>;
+    deleteById: (params: {
+      sessionId: string;
+    }) => Promise<Result<string, null>>;
   };
 
   setlist: {
     insert: (params: { setlist: Setlist }) => Promise<Result<string, null>>;
     findById: (params: {
-      id: string;
+      setlistId: string;
     }) => Promise<Result<string, SetlistFindByIdPayload | null>>;
     findByAccountId: (params: {
       accountId: string;
     }) => Promise<Result<string, Setlist[]>>;
   };
 
-  account_setlist: {
+  setlistAccounts: {
     insert: (params: {
       setlistId: string;
       accountId: string;
     }) => Promise<Result<string, null>>;
   };
 
-  song: {
-    insert: (params: {
-      name: SongName;
-      id: SongId;
-      creatorId: string;
-    }) => Promise<Result<string, null>>;
-    search: ({ name }: { name: string }) => Promise<Result<string, Song[]>>;
+  password: {
+    findByAccountId: (params: {
+      accountId: string;
+    }) => Promise<
+      Result<string, { passwordHash: string; accountId: string }[]>
+    >;
   };
 
-  setlist_song: {
+  song: {
     insert: (params: {
+      songName: string;
+      songId: string;
+      creatorId: string;
+      artistId: string;
+    }) => Promise<Result<string, null>>;
+    search: ({
+      songName,
+    }: {
+      songName: string;
+    }) => Promise<Result<string, Song[]>>;
+  };
+
+  artist: {
+    insert: (params: {
+      artistName: string;
+      artistId: string;
+      creatorId: string;
+    }) => Promise<Result<string, null>>;
+    search: ({
+      artistName,
+    }: {
+      artistName: string;
+    }) => Promise<
+      Result<
+        string,
+        { artistName: string; artistId: string; creatorId: string }
+      >
+    >;
+  };
+
+  setlistItem: {
+    insert: (params: {
+      setlistItemId: string;
       songId: string;
       setlistId: string;
+    }) => Promise<Result<string, null>>;
+    update: (params: {
+      setlistItemId: string;
+      ordering: number;
     }) => Promise<Result<string, null>>;
   };
 };

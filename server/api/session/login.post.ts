@@ -2,15 +2,16 @@ import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
 import {
-  ServerErr,
-  ValidationErr,
   Email,
   Err,
   isCorrectPassword,
+  NotFoundErr,
   Ok,
   Password,
+  ServerErr,
   Session,
   sessionIdCookieName,
+  ValidationErr,
 } from "~~/utils";
 
 const Body = z.object({
@@ -31,7 +32,9 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const found = await db.account.findByEmail({ email: parsed.data.email });
+  const found = await db.account.findByEmail({
+    accountEmail: parsed.data.email,
+  });
 
   if (found.type === "Err") {
     return ServerErr(found.error);
@@ -43,9 +46,23 @@ export default defineEventHandler(async (event) => {
     return NotFoundErr("account not found");
   }
 
+  const foundPass = await db.password.findByAccountId({
+    accountId: account.accountId,
+  });
+
+  if (foundPass.type === "Err") {
+    return ServerErr(foundPass.error);
+  }
+
+  const password = foundPass.data[0];
+
+  if (!password) {
+    return NotFoundErr("password not found");
+  }
+
   if (
     !isCorrectPassword({
-      passwordHash: account.passwordHash,
+      passwordHash: password.passwordHash,
       password: parsed.data.pass,
     })
   ) {
@@ -53,8 +70,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const sessionNew: Session = {
-    accountId: account.id,
-    id: v4(),
+    accountId: account.accountId,
+    sessionId: v4(),
   };
 
   // ensure an account can have at most one session
@@ -75,7 +92,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // todo get cookies working
-  setCookie(event, sessionIdCookieName, sessionNew.id, {
+  setCookie(event, sessionIdCookieName, sessionNew.sessionId, {
     // todo get httpOnly session cookie working
     // httpOnly: true,
     // path: "/",
@@ -83,8 +100,8 @@ export default defineEventHandler(async (event) => {
   });
 
   return Ok({
-    sessionId: sessionNew.id,
-    id: account.id,
-    email: account.email,
+    sessionId: sessionNew.sessionId,
+    accountId: account.accountId,
+    accountEmail: account.accountEmail,
   });
 });

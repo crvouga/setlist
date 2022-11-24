@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { v4 } from "uuid";
 import { SongPostBody } from "~~/utils";
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
@@ -19,7 +20,8 @@ const create = async () => {
   status.value = "Loading";
 
   const body: SongPostBody = {
-    name: name.value,
+    songName: name.value,
+    artistId: v4(),
   };
 
   const result = await $fetch("/api/song-create", {
@@ -37,7 +39,7 @@ const create = async () => {
   status.value = "Err";
 
   if (result.error.type === "validation") {
-    nameProblems.value = result.error.name;
+    nameProblems.value = result.error.songName ?? [];
     return;
   }
 

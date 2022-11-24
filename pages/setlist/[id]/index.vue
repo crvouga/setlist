@@ -1,6 +1,11 @@
 <script lang="ts" setup>
-import { SetlistFindByIdPayload } from "~~/utils";
+import {
+  SetlistItemPatchBody,
+  SetlistFindByIdPayload,
+  SetlistFindById,
+} from "~~/utils";
 import draggable from "vuedraggable";
+import { z } from "zod";
 
 const status = ref<"Loading" | "Err" | "Ok">("Loading");
 const data = ref<SetlistFindByIdPayload | null>(null);
@@ -10,11 +15,18 @@ const route = useRoute();
 const id = route.params.id;
 
 const load = async () => {
+  if (typeof id !== "string") {
+    return;
+  }
+
   status.value = "Loading";
+
+  const query: SetlistFindById = {
+    setlistId: id,
+  };
+
   const result = await $fetch("/api/setlist-by-id", {
-    query: {
-      id,
-    },
+    query: query,
   });
   if (result.type === "Ok") {
     status.value = "Ok";
@@ -38,6 +50,36 @@ const load = async () => {
 onMounted(() => {
   load();
 });
+
+const onDragEnd = async (event: unknown) => {
+  const parsed = z
+    .object({
+      newIndex: z.number(),
+      oldIndex: z.number(),
+    })
+    .safeParse(event);
+
+  if (!parsed.success) {
+    console.error(parsed.error);
+    return;
+  }
+
+  const { newIndex } = parsed.data;
+  const setlistItemId = data.value?.items[newIndex]?.setlistItemId;
+  if (!setlistItemId) {
+    return;
+  }
+  const body: SetlistItemPatchBody = {
+    setlistItemId,
+    ordering: newIndex,
+  };
+  const result = await $fetch("/api/setlist-item", {
+    method: "PATCH",
+    body,
+  });
+
+  console.log({ result });
+};
 </script>
 <template>
   <div>
@@ -63,11 +105,12 @@ onMounted(() => {
 
         <div class="col-12 d-flex flex-column gap-4 py-4">
           <draggable
-            v-model="data.songs"
+            v-model="data.items"
             group="people"
             item-key="id"
             class="d-flex flex-column gap-4"
-            handle=".handle">
+            handle=".handle"
+            @end="onDragEnd">
             <template #item="{ element }">
               <div class="d-flex align-items-center">
                 <Icon name="hamburger" class="handle d-block" />

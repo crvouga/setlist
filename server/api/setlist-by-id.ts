@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const parsed = SetlistFindById.safeParse(query);
   if (!parsed.success) {
-    return ValidationErr({ id: parsed.error.formErrors.fieldErrors.id ?? [] });
+    return ValidationErr(parsed.error.formErrors.fieldErrors);
   }
   const result = await db.setlist.findById(parsed.data);
   if (result.type === "Err") {

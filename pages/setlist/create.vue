@@ -19,7 +19,7 @@ const create = async () => {
   status.value = "Loading";
 
   const body: SetlistPostBody = {
-    name: name.value,
+    setlistName: name.value,
   };
 
   const result = await $fetch("/api/setlist-create", {
@@ -30,7 +30,7 @@ const create = async () => {
   if (result.type === "Ok") {
     status.value = "Ok";
     show({ message: "Setlist created" });
-    router.push(`/setlist/${result.data.id}`);
+    router.push(`/setlist/${result.data.setlistId}`);
     return;
   }
 

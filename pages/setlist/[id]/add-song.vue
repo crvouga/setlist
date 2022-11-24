@@ -20,7 +20,7 @@ const { show } = useToast();
 const addSong = async ({ songId }: { songId: SongId }) => {
   status.value = "Loading";
   const setlistId = route.params.id;
-  const result = await $fetch("/api/setlist-add-song", {
+  const result = await $fetch("/api/setlist-item", {
     method: "POST",
     body: {
       setlistId,
@@ -39,7 +39,7 @@ const addSong = async ({ songId }: { songId: SongId }) => {
     return;
   }
   if (result.error.type === "validation") {
-    problems.value = [...result.error.setlistId, ...result.error.songId];
+    problems.value = ["Server did not understand request"];
     return;
   }
 };
@@ -78,10 +78,10 @@ const addSong = async ({ songId }: { songId: SongId }) => {
         class="col-12 px-4 d-flex flex-column mt-2 gap-4">
         <div
           v-for="song in data.data"
-          v-bind:key="song.id"
-          @click="addSong({ songId: song.id })">
+          v-bind:key="song.songId"
+          @click="addSong({ songId: song.songId })">
           <h4 class="m-0">
-            {{ song.name }}
+            {{ song.songName }}
           </h4>
         </div>
       </div>

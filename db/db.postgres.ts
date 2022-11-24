@@ -12,16 +12,12 @@ import {
 import { Db } from "./db.interface";
 import {
   Accounts,
-  AccountsAccountId,
-  AccountsSetlists,
-  AccountsSetlistsId,
+  Passwords,
   Sessions,
-  SessionsSessionId,
+  SetlistAccounts,
+  SetlistItems,
   Setlists,
-  SetlistsSetlistId,
-  SetlistsSongs,
   Songs,
-  SongsSongId,
 } from "./postgres-tables";
 
 //
@@ -63,8 +59,8 @@ export const db: Db = {
   session: {
     async insert(params) {
       const row: Sessions = {
-        account_id: params.session.accountId,
-        session_id: params.session.id as SessionsSessionId,
+        account_id: params.session.accountId as Sessions["account_id"],
+        session_id: params.session.sessionId as Sessions["session_id"],
       };
 
       const result = await query<Sessions>(
@@ -80,7 +76,7 @@ export const db: Db = {
 
     async deleteById(params) {
       const result = await query(
-        `DELETE FROM sessions WHERE session_id='${params.id}'`
+        `DELETE FROM sessions WHERE session_id='${params.sessionId}'`
       );
       if (result.type === "Err") {
         return result;
@@ -102,7 +98,7 @@ export const db: Db = {
 
     async findById(params) {
       const result = await query<Sessions>(
-        `SELECT * FROM sessions WHERE session_id='${params.id}'`
+        `SELECT * FROM sessions WHERE session_id='${params.sessionId}'`
       );
 
       if (result.type === "Err") {
@@ -110,7 +106,7 @@ export const db: Db = {
       }
 
       const sessions = result.data.map((row) => ({
-        id: row.session_id,
+        sessionId: row.session_id,
         accountId: row.account_id,
       }));
 
@@ -127,14 +123,20 @@ export const db: Db = {
   account: {
     async insert(params) {
       const row: Accounts = {
-        email_address: params.account.email,
-        account_id: params.account.id as AccountsAccountId,
-        password_hash: params.account.passwordHash,
+        account_email: params.accountEmail,
+        account_id: params.accountId as Accounts["account_id"],
       };
 
-      const result = await query<Accounts>(
-        `INSERT INTO accounts (account_id, email_address, password_hash) VALUES ('${row.account_id}', '${row.email_address}', '${row.password_hash}')`
-      );
+      const passwordRow: Passwords = {
+        account_id: row.account_id,
+        password_hash: params.passwordHash,
+        password_id: v4() as Passwords["password_id"],
+      };
+
+      const result = await transact([
+        `INSERT INTO accounts (account_id, account_email) VALUES ('${row.account_id}', '${row.account_email}')`,
+        `INSERT INTO passwords (password_id, account_id, password_hash) VALUES ('${passwordRow.password_id}', '${passwordRow.account_id}', '${passwordRow.password_hash}')`,
+      ]);
 
       if (result.type === "Err") {
         return result;
@@ -152,32 +154,24 @@ export const db: Db = {
       }
 
       const accounts = result.data.map((row) => ({
-        id: row.account_id,
-        email: row.email_address,
-        passwordHash: row.password_hash,
+        accountId: row.account_id.toString(),
+        accountEmail: row.account_email,
       }));
 
-      const found = accounts[0];
-
-      if (!found) {
-        return Ok(null);
-      }
-
-      return Ok(found);
+      return Ok(accounts[0] ?? null);
     },
 
     async findByEmail(params) {
       const result = await query<Accounts>(
-        `SELECT * FROM accounts WHERE email_address='${params.email}'`
+        `SELECT * FROM accounts WHERE account_email='${params.accountEmail}'`
       );
       if (result.type === "Err") {
         return result;
       }
       return Ok(
         result.data.map((row) => ({
-          id: row.account_id,
-          email: row.email_address,
-          passwordHash: row.password_hash,
+          accountId: row.account_id,
+          accountEmail: row.account_email,
         }))
       );
     },
@@ -186,10 +180,10 @@ export const db: Db = {
   setlist: {
     async findByAccountId(params) {
       const result = await query<unknown>(`
-        SELECT a_s.setlist_id, s.creator_id, a_s.account_id, a.email_address, s.setlist_name
+        SELECT *
         FROM setlists s
-        JOIN accounts_setlists a_s ON s.setlist_id = a_s.setlist_id
-        JOIN accounts a ON a_s.account_id = a.account_id
+        JOIN setlist_accounts s_a ON s.setlist_id = s_a.setlist_id
+        JOIN accounts a ON s_a.account_id = a.account_id
         WHERE a.account_id='${params.accountId}'
       `);
 
@@ -201,7 +195,7 @@ export const db: Db = {
         setlist_id: SetlistId,
         account_id: AccountId,
         creator_id: AccountId,
-        email_address: z.string().email(),
+        account_email: z.string().email(),
         setlist_name: SetlistName,
       });
 
@@ -215,88 +209,71 @@ export const db: Db = {
 
       return Ok(
         parsed.data.map((row) => ({
-          id: row.setlist_id,
+          setlistId: row.setlist_id,
           creatorId: row.creator_id,
-          name: row.setlist_name,
+          setlistName: row.setlist_name,
         }))
       );
     },
 
     async findById(params) {
-      const result = await query<unknown>(`
+      // todo only do one query
+
+      const resultSetlists = await query<Setlists>(`
         SELECT *
-        FROM setlists sl
-        JOIN accounts a ON sl.creator_id = a.account_id
-        JOIN setlists_songs sl_s ON sl_s.setlist_id = sl.setlist_id
-        JOIN songs s ON sl_s.song_id = s.song_id
-        WHERE sl.setlist_id='${params.id}'
-        ORDER BY sl_s.ordering ASC, sl_s.updated_at DESC
+        FROM setlists
+        WHERE setlist_id='${params.setlistId}'
       `);
 
-      if (result.type === "Err") {
-        return result;
+      if (resultSetlists.type === "Err") {
+        return resultSetlists;
       }
 
-      const Row = z.object({
-        setlists_songs_id: z.string().uuid(),
-        setlist_id: z.string().uuid(),
-        setlist_name: z.string(),
-        creator_id: z.string().uuid(),
-        email_address: z.string().email(),
-        password_hash: z.string(),
-        song_name: z.string(),
-        song_id: z.string(),
-      });
+      const resultItems = await query<SetlistItems & Songs>(`
+        SELECT *
+        FROM setlist_items
+        JOIN songs ON setlist_items.song_id = songs.song_id
+        WHERE setlist_id='${params.setlistId}'
+        ORDER BY setlist_items.ordering ASC, setlist_items.updated_at ASC
+      `);
 
-      const parsed = z.array(Row).safeParse(result.data);
-
-      if (!parsed.success) {
-        return Err(
-          `Database Error! Unexpected shape. ${parsed.error.toString()}`
-        );
+      if (resultItems.type === "Err") {
+        return resultItems;
       }
 
-      // todo some how put this in the database query
-      const byId: { [setlistId: string]: SetlistFindByIdPayload } = {};
-      for (const row of parsed.data) {
-        const songs = byId[row.setlist_id]?.songs ?? [];
-        byId[row.setlist_id] = {
-          creatorEmail: row.email_address,
-          creatorId: row.creator_id,
-          setlistId: row.setlist_id,
-          setlistName: row.setlist_name,
-          songs: [
-            ...songs,
-            {
-              id: row.setlists_songs_id,
-              songId: row.song_id,
-              name: row.song_name,
-            },
-          ],
-        };
+      const rowSetlist = resultSetlists.data[0];
+      if (!rowSetlist) {
+        return Ok(null);
       }
-
-      const payload = byId[params.id] ?? null;
+      const payload: SetlistFindByIdPayload = {
+        setlistId: rowSetlist.setlist_id,
+        setlistName: rowSetlist.setlist_name,
+        items: resultItems.data.map((row) => ({
+          setlistItemId: row.setlist_item_id,
+          songId: row.song_id,
+          songName: row.song_name,
+        })),
+      };
 
       return Ok(payload);
     },
 
     async insert(params) {
       const row: Setlists = {
-        creator_id: params.setlist.creatorId,
-        setlist_id: params.setlist.id as SetlistsSetlistId,
-        setlist_name: params.setlist.name,
+        creator_id: params.setlist.creatorId as Setlists["creator_id"],
+        setlist_id: params.setlist.setlistId as Setlists["setlist_id"],
+        setlist_name: params.setlist.setlistName,
       };
 
-      const rowAccountsSetlists: AccountsSetlists = {
-        account_id: row.creator_id as AccountsAccountId,
-        id: v4() as AccountsSetlistsId,
+      const setlistAccounts: SetlistAccounts = {
+        account_id: row.creator_id,
+        setlist_account_id: v4() as SetlistAccounts["setlist_account_id"],
         setlist_id: row.setlist_id,
       };
 
       const result = await transact([
         `INSERT INTO setlists (setlist_id, setlist_name, creator_id) VALUES ('${row.setlist_id}', '${row.setlist_name}', '${row.creator_id}')`,
-        `INSERT INTO accounts_setlists (id, account_id, setlist_id) VALUES ('${rowAccountsSetlists.id}', '${rowAccountsSetlists.account_id}', '${rowAccountsSetlists.setlist_id}')`,
+        `INSERT INTO setlist_accounts (setlist_account_id, account_id, setlist_id) VALUES ('${setlistAccounts.setlist_account_id}', '${setlistAccounts.account_id}', '${setlistAccounts.setlist_id}')`,
       ]);
 
       if (result.type === "Err") {
@@ -306,16 +283,16 @@ export const db: Db = {
       return Ok(null);
     },
   },
-  account_setlist: {
+  setlistAccounts: {
     async insert(params) {
-      const row: AccountsSetlists = {
-        account_id: params.accountId as AccountsAccountId,
-        id: v4() as AccountsSetlistsId,
-        setlist_id: params.setlistId as SetlistsSetlistId,
+      const row: SetlistAccounts = {
+        account_id: params.accountId as SetlistAccounts["account_id"],
+        setlist_account_id: v4() as SetlistAccounts["setlist_account_id"],
+        setlist_id: params.setlistId as SetlistAccounts["setlist_id"],
       };
 
       const result = await query(
-        `INSERT INTO accounts_setlists (id, account_id, setlist_id) VALUES ('${row.id}', '${row.account_id}', '${row.setlist_id}')`
+        `INSERT INTO setlist_accounts (setlist_account_id, account_id, setlist_id) VALUES ('${row.setlist_account_id}', '${row.account_id}', '${row.setlist_id}')`
       );
 
       if (result.type === "Err") {
@@ -328,9 +305,10 @@ export const db: Db = {
   song: {
     async insert(params) {
       const row: Songs = {
-        creator_id: params.creatorId,
-        song_id: params.id as SongsSongId,
-        song_name: params.name,
+        creator_id: params.creatorId as Songs["creator_id"],
+        song_id: params.songId as Songs["song_id"],
+        song_name: params.songName,
+        artist_id: params.artistId as Songs["artist_id"],
       };
 
       const result = await query(
@@ -346,37 +324,75 @@ export const db: Db = {
 
     async search(params) {
       const result = await query<Songs>(
-        `SELECT * FROM songs WHERE song_name LIKE '%${params.name}%'`
+        `SELECT * FROM songs WHERE song_name LIKE '%${params.songName}%'`
       );
       if (result.type === "Err") {
         return result;
       }
       return Ok(
         result.data.map((row) => ({
-          id: row.song_id,
-          name: row.song_name,
+          songId: row.song_id,
+          songName: row.song_name,
+          artistId: row.artist_id,
           creatorId: row.creator_id,
         }))
       );
     },
   },
 
-  setlist_song: {
+  setlistItem: {
     async insert(params) {
-      const row: SetlistsSongs = {
-        setlists_songs_id: v4() as SetlistsSongs["setlists_songs_id"],
-        setlist_id: params.setlistId as SetlistsSetlistId,
-        song_id: params.songId as SongsSongId,
+      const row: SetlistItems = {
+        setlist_item_id:
+          params.setlistItemId as SetlistItems["setlist_item_id"],
+        setlist_id: params.setlistId as SetlistItems["setlist_id"],
+        song_id: params.songId as SetlistItems["song_id"],
         ordering: 0,
         updated_at: new Date(),
       };
       const result = await query(
-        `INSERT INTO setlists_songs (setlists_songs_id, setlist_id, song_id, ordering) VALUES ('${row.setlists_songs_id}', '${row.setlist_id}', '${row.song_id}', ${row.ordering})`
+        `INSERT INTO setlist_items (setlist_item_id, setlist_id, song_id, ordering) VALUES ('${row.setlist_item_id}', '${row.setlist_id}', '${row.song_id}', ${row.ordering})`
       );
       if (result.type === "Err") {
         return result;
       }
       return Ok(null);
+    },
+
+    async update(params) {
+      const result = await query(
+        `UPDATE setlists_songs SET ordering=${params.ordering}, updated_at=NOW() WHERE setlists_songs_id='${params.setlistItemId}'`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(null);
+    },
+  },
+
+  artist: {
+    async insert() {
+      return Err("Database error! Missing logic");
+    },
+    async search() {
+      return Err("Database error! Missing logic");
+    },
+  },
+
+  password: {
+    async findByAccountId(params) {
+      const result = await query<Passwords>(
+        `SELECT * FROM passwords WHERE account_id='${params.accountId}'`
+      );
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(
+        result.data.map((row) => ({
+          accountId: row.account_id,
+          passwordHash: row.password_hash,
+        }))
+      );
     },
   },
 };

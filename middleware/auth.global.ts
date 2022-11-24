@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
   authAccount.value = result.type === "Err" ? null : result.data;
 
-  if (result.type === "Ok") {
+  if (authAccount.value !== null) {
     return;
   }
 
@@ -18,7 +18,5 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     return;
   }
 
-  if (authAccount.value === null) {
-    return navigateTo("/session/create");
-  }
+  return navigateTo("/session/create");
 });

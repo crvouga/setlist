@@ -11,16 +11,10 @@ export type Email = z.infer<typeof Email>;
 export const AccountId = z.string().uuid();
 
 export const Account = z.object({
-  id: AccountId,
-  email: Email,
+  accountId: AccountId,
+  accountEmail: Email,
 });
 export type Account = z.infer<typeof Account>;
-
-export const AccountWithPassword = z.intersection(
-  Account,
-  z.object({ passwordHash: z.string() })
-);
-export type AccountWithPassword = z.infer<typeof AccountWithPassword>;
 
 const saltRounds = 10;
 

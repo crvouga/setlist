@@ -1,17 +1,16 @@
-import { z } from "zod";
 import { db } from "~~/db";
-import { ServerErr, Ok } from "~~/utils";
+import { Ok, ServerErr, SongSearchQuery } from "~~/utils";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
-  const parsed = z.object({ name: z.string().optional() }).safeParse(query);
+  const parsed = SongSearchQuery.safeParse(query);
   if (!parsed.success) {
     return ValidationErr({
-      name: parsed.error.formErrors.fieldErrors.name ?? [],
+      songName: parsed.error.formErrors.fieldErrors.songName ?? [],
     });
   }
   const found = await db.song.search({
-    name: parsed.data.name ?? "",
+    songName: parsed.data.songName ?? "",
   });
   if (found.type === "Err") {
     return ServerErr(found.error);

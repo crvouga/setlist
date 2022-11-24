@@ -8,25 +8,19 @@ export type AccountsAccountId = string & { __brand: 'AccountsAccountId' };
 export default interface Accounts {
   account_id: AccountsAccountId;
 
-  email_address: string;
-
-  password_hash: string;
+  account_email: string;
 }
 
 /** Represents the initializer for the table public.accounts */
 export interface AccountsInitializer {
   account_id: AccountsAccountId;
 
-  email_address: string;
-
-  password_hash: string;
+  account_email: string;
 }
 
 /** Represents the mutator for the table public.accounts */
 export interface AccountsMutator {
   account_id?: AccountsAccountId;
 
-  email_address?: string;
-
-  password_hash?: string;
+  account_email?: string;
 }

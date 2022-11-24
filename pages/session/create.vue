@@ -125,7 +125,7 @@ const login = async () => {
 
       <div class="d-flex flex-column justify-content-center py-5">
         <p class="h6 text-center text-muted">Don't have an account?</p>
-        <Button linkTo="/account/create" class="btn-outline-primary">
+        <Button linkTo="/account/create" variant="primary-outlined">
           <Icon name="create-account" />
           Create New Account
         </Button>

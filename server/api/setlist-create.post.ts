@@ -1,5 +1,11 @@
 import { v4 } from "uuid";
-import { Ok, Setlist, SetlistPostBody, ValidationErr } from "~/utils";
+import {
+  ServerErr,
+  Ok,
+  Setlist,
+  SetlistPostBody,
+  ValidationErr,
+} from "~/utils";
 import { db } from "~~/db";
 import { getAuthAccount } from "../utils/auth";
 
@@ -9,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.formErrors.fieldErrors;
-    return ValidationErr({ name: fieldErrors.name ?? [] });
+    return ValidationErr({ name: fieldErrors.setlistName ?? [] });
   }
 
   const foundAccount = await getAuthAccount(event);
@@ -19,9 +25,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const dirty: Setlist = {
-    creatorId: foundAccount.data.id,
-    id: v4(),
-    name: parsed.data.name,
+    creatorId: foundAccount.data.accountId,
+    setlistId: v4(),
+    setlistName: parsed.data.setlistName,
   };
 
   const parsedSetlist = Setlist.safeParse(dirty);

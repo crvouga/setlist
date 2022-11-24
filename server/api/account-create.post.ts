@@ -2,7 +2,6 @@ import { v4 } from "uuid";
 import { z } from "zod";
 import { db } from "~~/db";
 import {
-  AccountWithPassword,
   Email,
   Err,
   hashPassword,
@@ -30,7 +29,9 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const found = await db.account.findByEmail({ email: parsed.data.email });
+  const found = await db.account.findByEmail({
+    accountEmail: parsed.data.email,
+  });
 
   if (found.type === "Err") {
     return ServerErr(found.error);
@@ -49,13 +50,11 @@ export default defineEventHandler(async (event) => {
     return ServerErr(hashed.error);
   }
 
-  const accountNew: AccountWithPassword = {
-    email: parsed.data.email,
-    id: v4(),
+  const inserted = await db.account.insert({
+    accountEmail: parsed.data.email,
+    accountId: v4(),
     passwordHash: hashed.data,
-  };
-
-  const inserted = await db.account.insert({ account: accountNew });
+  });
 
   if (inserted.type === "Err") {
     return ServerErr(inserted.error);

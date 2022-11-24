@@ -8,8 +8,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = SongPostBody.safeParse(body);
   if (!parsed.success) {
-    const fieldErrors = parsed.error.formErrors.fieldErrors;
-    return ValidationErr({ name: fieldErrors.name ?? [] });
+    return ValidationErr(parsed.error.formErrors.fieldErrors);
   }
 
   const auth = await getAuthSession(event);
@@ -17,10 +16,11 @@ export default defineEventHandler(async (event) => {
     return auth;
   }
 
-  const dirty = {
-    name: parsed.data.name,
+  const dirty: Song = {
+    artistId: parsed.data.artistId,
+    songName: parsed.data.songName,
     creatorId: auth.data.accountId,
-    id: v4(),
+    songId: v4(),
   };
   const cleaned = Song.safeParse(dirty);
   if (!cleaned.success) {

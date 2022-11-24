@@ -16,7 +16,7 @@ export const getAuthSession = async (
     return UnauthorizedErr("no session cookie");
   }
 
-  const found = await db.session.findById({ id: cookie });
+  const found = await db.session.findById({ sessionId: cookie });
 
   if (found.type === "Err") {
     return ServerErr(found.error);

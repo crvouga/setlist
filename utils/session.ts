@@ -4,7 +4,7 @@ export const SessionId = z.string().uuid();
 export type SessionId = z.infer<typeof SessionId>;
 
 export const Session = z.object({
-  id: SessionId,
+  sessionId: SessionId,
   accountId: z.string().uuid(),
 });
 
