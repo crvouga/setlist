@@ -3,9 +3,9 @@ import { SetlistPostBody } from "~~/utils/setlist";
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 
-const name = ref("");
+const songName = ref("");
 const nameProblems = ref<string[]>([]);
-watch(name, () => {
+watch(songName, () => {
   nameProblems.value = [];
 });
 
@@ -19,7 +19,7 @@ const create = async () => {
   status.value = "Loading";
 
   const body: SetlistPostBody = {
-    setlistName: name.value,
+    setlistName: songName.value,
   };
 
   const result = await $fetch("/api/setlist/create", {

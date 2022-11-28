@@ -2,14 +2,14 @@
 import { ArtistPostBody } from "~~/utils";
 
 const { onCreated } = defineProps<{
-  onCreated: () => void;
+  onCreated: ({ artistId }: { artistId: string }) => void;
 }>();
 
-const name = ref("");
-const nameProblems = ref<string[]>([]);
+const artistName = ref("");
+const artistNameProblems = ref<string[]>([]);
 
-watch(name, () => {
-  nameProblems.value = [];
+watch(artistName, () => {
+  artistNameProblems.value = [];
 });
 
 const problems = ref<string[]>([]);
@@ -18,10 +18,10 @@ const status = ref<"NotAsked" | "Loading" | "Err" | "Ok">("NotAsked");
 const create = async () => {
   status.value = "Loading";
   problems.value = [];
-  nameProblems.value = [];
+  artistNameProblems.value = [];
 
   const body: ArtistPostBody = {
-    artistName: name.value,
+    artistName: artistName.value,
   };
 
   const result = await $fetch("/api/artist/create", {
@@ -31,7 +31,7 @@ const create = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    onCreated();
+    onCreated({ artistId: result.data.artistId });
     return;
   }
 
@@ -48,7 +48,7 @@ const create = async () => {
   }
 
   if (result.error.type === "validation") {
-    nameProblems.value = result.error.artistName;
+    artistNameProblems.value = result.error.artistName;
     return;
   }
 };
@@ -63,8 +63,8 @@ const create = async () => {
         <TextField
           label="Name"
           id="name"
-          v-model="name"
-          :problems="nameProblems" />
+          v-model="artistName"
+          :problems="artistNameProblems" />
 
         <Problems class="mt-2" :problems="problems" />
 

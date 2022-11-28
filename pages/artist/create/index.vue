@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ArtistPostBody } from "~~/utils";
 
-const name = ref("");
+const songName = ref("");
 const nameProblems = ref<string[]>([]);
 
-watch(name, () => {
+watch(songName, () => {
   nameProblems.value = [];
 });
 
@@ -17,7 +17,7 @@ const create = async () => {
   nameProblems.value = [];
 
   const body: ArtistPostBody = {
-    artistName: name.value,
+    artistName: songName.value,
   };
 
   const result = await $fetch("/api/artist/create", {

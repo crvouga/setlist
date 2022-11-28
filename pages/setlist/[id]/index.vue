@@ -73,7 +73,7 @@ const onDragEnd = async (event: unknown) => {
     setlistItemId,
     ordering: newIndex,
   };
-  const result = await $fetch("/api/setlist-item", {
+  const result = await $fetch("/api/setlist-item/update", {
     method: "PATCH",
     body,
   });
@@ -114,7 +114,7 @@ const onDragEnd = async (event: unknown) => {
             <template #item="{ element }">
               <div class="d-flex align-items-center">
                 <Icon name="hamburger" class="handle d-block" />
-                <div class="ml-3 fw-bold fs-4">{{ element.name }}</div>
+                <div class="ml-3 fw-bold fs-4">{{ element.songName }}</div>
               </div>
             </template>
           </draggable>

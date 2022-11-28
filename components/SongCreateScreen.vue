@@ -9,10 +9,10 @@ const { artistId, onCreated, onSelectArtist } = defineProps<{
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 
-const name = useState("song-name", () => "");
-const nameProblems = ref<string[]>([]);
-watch(name, () => {
-  nameProblems.value = [];
+const songName = useState("song-name", () => "");
+const songNameProblems = ref<string[]>([]);
+watch(songName, () => {
+  songNameProblems.value = [];
 });
 
 const problems = ref<string[]>([]);
@@ -26,7 +26,7 @@ const create = async () => {
   status.value = "Loading";
 
   const body: SongPostBody = {
-    songName: name.value,
+    songName: songName.value,
     artistId: artistId,
   };
 
@@ -44,7 +44,7 @@ const create = async () => {
   status.value = "Err";
 
   if (result.error.type === "validation") {
-    nameProblems.value = result.error.songName ?? [];
+    songNameProblems.value = result.error.songName ?? [];
     return;
   }
 
@@ -64,8 +64,8 @@ const create = async () => {
         <TextField
           label="Name"
           id="name"
-          v-model="name"
-          :problems="nameProblems" />
+          v-model="songName"
+          :problems="songNameProblems" />
 
         <label for="artistSearch" class="form-label mt-3">Artist</label>
 

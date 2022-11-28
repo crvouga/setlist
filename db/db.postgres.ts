@@ -236,7 +236,7 @@ export const db: Db = {
         FROM setlist_items
         JOIN songs ON setlist_items.song_id = songs.song_id
         WHERE setlist_id='${params.setlistId}'
-        ORDER BY setlist_items.ordering ASC, setlist_items.updated_at ASC
+        ORDER BY setlist_items.ordering ASC, setlist_items.updated_at DESC
       `);
 
       if (resultItems.type === "Err") {
@@ -353,7 +353,7 @@ export const db: Db = {
         updated_at: new Date(),
       };
       const result = await query(
-        `INSERT INTO setlist_items (setlist_item_id, setlist_id, song_id, ordering) VALUES ('${row.setlist_item_id}', '${row.setlist_id}', '${row.song_id}', ${row.ordering})`
+        `INSERT INTO setlist_items (setlist_item_id, setlist_id, song_id, ordering, updated_at) VALUES ('${row.setlist_item_id}', '${row.setlist_id}', '${row.song_id}', ${row.ordering}, NOW())`
       );
       if (result.type === "Err") {
         return result;
@@ -363,7 +363,7 @@ export const db: Db = {
 
     async update(params) {
       const result = await query(
-        `UPDATE setlists_songs SET ordering=${params.ordering}, updated_at=NOW() WHERE setlists_songs_id='${params.setlistItemId}'`
+        `UPDATE setlist_items SET ordering=${params.ordering}, updated_at=NOW() WHERE setlist_item_id='${params.setlistItemId}'`
       );
       if (result.type === "Err") {
         return result;

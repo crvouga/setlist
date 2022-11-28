@@ -27,6 +27,6 @@ export const SongPostBody = z.object({
 export type SongPostBody = z.infer<typeof SongPostBody>;
 
 export const SongSearchQuery = z.object({
-  songName: SongName,
+  songName: z.string(),
 });
 export type SongSearchQuery = z.infer<typeof SongSearchQuery>;

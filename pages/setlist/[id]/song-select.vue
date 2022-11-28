@@ -32,6 +32,7 @@ const onSelect = async ({ songId }: { songId: SongId }) => {
   status.value = "Err";
   if (result.error.type === "server_error") {
     problems.value = [result.error.message];
+    show({ message: result.error.message });
     return;
   }
   if (result.error.type === "validation") {

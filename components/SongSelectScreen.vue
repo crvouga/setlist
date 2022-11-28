@@ -4,11 +4,11 @@ const { onCreate, onSelect } = defineProps<{
   onCreate: () => void;
 }>();
 
-const name = ref("");
+const songName = ref("");
 
-const { data, pending } = useFetch("/api/song", {
+const { data, pending } = useFetch("/api/song/search", {
   query: {
-    name,
+    songName,
   },
 });
 </script>
@@ -29,7 +29,7 @@ const { data, pending } = useFetch("/api/song", {
           <input
             placeholder="Search songs"
             class="form-control"
-            v-model="name" />
+            v-model="songName" />
           <Button :loading="pending">
             <Icon name="search" />
             Search
@@ -38,7 +38,7 @@ const { data, pending } = useFetch("/api/song", {
 
         <div
           v-if="data?.type === 'Ok'"
-          class="px-4 d-flex flex-column mt-2 gap-4">
+          class="p-2 d-flex flex-column mt-2 gap-4">
           <div
             v-for="song in data.data"
             v-bind:key="song.songId"
