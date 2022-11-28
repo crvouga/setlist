@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import { z } from "zod";
 import {
   AccountId,
+  ArtistId,
   Err,
   Ok,
   SetlistFindByIdPayload,
@@ -12,6 +13,7 @@ import {
 import { Db } from "./db.interface";
 import {
   Accounts,
+  Artists,
   Passwords,
   Sessions,
   SetlistAccounts,
@@ -371,8 +373,19 @@ export const db: Db = {
   },
 
   artist: {
-    async insert() {
-      return Err("Database error! Missing logic");
+    async insert(params) {
+      const row: Artists = {
+        artist_id: params.artistId as Artists["artist_id"],
+        artist_name: params.artistName,
+        creator_id: params.creatorId as Artists["creator_id"],
+      };
+      const result = await query(`
+        INSERT INTO artists (artist_id, artist_name, creator_id) VALUES ('${row.artist_id}', '${row.artist_name}', '${row.creator_id}')
+      `);
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(null);
     },
     async search() {
       return Err("Database error! Missing logic");
