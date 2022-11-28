@@ -25,6 +25,7 @@
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.10.2",
     "dotenv": "^16.0.3",
+    "ee-ts": "^1.0.2",
     "pg": "^8.8.0",
     "supertokens-web-js": "^0.3.0",
     "uuid": "^9.0.0",

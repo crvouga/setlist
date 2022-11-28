@@ -6,3 +6,4 @@ export * from "./session";
 export * from "./remote-data";
 export * from "./song";
 export * from "./error";
+export * from "./routes";

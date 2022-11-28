@@ -97,7 +97,7 @@ const onDragEnd = async (event: unknown) => {
           <h1 class="m-0 fw-bold fs-1 text-truncate">
             {{ data.setlistName }}
           </h1>
-          <Button class="flex-1" :linkTo="`/setlist/${id}/add-song`">
+          <Button class="flex-1" :linkTo="`/setlist/${id}/song-select`">
             <Icon name="plus" class="mr-1" />
             Add Song
           </Button>

@@ -1,6 +1,11 @@
 <script lang="ts" setup>
-import { v4 } from "uuid";
 import { SongPostBody } from "~~/utils";
+
+const { artistId, onCreated, onSelectArtist } = defineProps<{
+  artistId?: string;
+  onCreated: () => void;
+  onSelectArtist: () => void;
+}>();
 
 const status = ref<"NotAsked" | "Loading" | "Ok" | "Err">("NotAsked");
 
@@ -12,15 +17,8 @@ watch(name, () => {
 
 const problems = ref<string[]>([]);
 
-const router = useRouter();
-const { show } = useToast();
-
-const route = useRoute();
-
-const artistId = route.query.artistId;
-
 const create = async () => {
-  if (typeof artistId !== "string") {
+  if (!artistId) {
     return;
   }
 
@@ -39,8 +37,7 @@ const create = async () => {
 
   if (result.type === "Ok") {
     status.value = "Ok";
-    show({ message: "Song created" });
-    router.back();
+    onCreated();
     return;
   }
 
@@ -59,8 +56,6 @@ const create = async () => {
 </script>
 
 <template>
-  <NavBarBack to="/" />
-
   <main class="container mt-2">
     <section class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
@@ -74,16 +69,15 @@ const create = async () => {
 
         <label for="artistSearch" class="form-label mt-3">Artist</label>
 
-        <NuxtLink
-          v-if="typeof artistId !== 'string'"
-          to="/song/create/add-artist">
-          <div
-            class="p-2 bg-white border rounded d-flex flex-row justify-content-between"
-            id="artistSearch">
-            <p class="m-0 text-muted">Select artist</p>
-            <Icon class="text-black" name="chevron-right" />
-          </div>
-        </NuxtLink>
+        <div
+          v-if="!artistId"
+          @click="onSelectArtist"
+          class="p-2 bg-white border rounded d-flex flex-row justify-content-between"
+          id="artistSearch">
+          <p class="m-0 text-muted">Select artist</p>
+          <Icon class="text-black" name="chevron-right" />
+        </div>
+
         <div
           v-else
           class="p-2 bg-white border rounded d-flex flex-row justify-content-between">

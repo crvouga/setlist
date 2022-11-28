@@ -1,21 +1,20 @@
 <script lang="ts" setup>
+const { onSelect, onCreate } = defineProps<{
+  onSelect: (payload: { artistId: string }) => void;
+  onCreate: () => void;
+}>();
 const search = ref<string>("");
 const { data, pending } = useFetch("/api/artist/search", {
   query: { search: search },
 });
-const router = useRouter();
-const addArtist = async ({ artistId }: { artistId: string }) => {
-  router.push(`/song/create?artistId=${artistId}`);
-};
 </script>
 <template>
-  <NavBarBack to="/song/create" />
   <main class="container mt-2">
     <section class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6 cn">
         <div class="d-flex justify-content-between align-items-center">
           <h2 class="fw-bold m-0">Select Artist</h2>
-          <Button linkTo="/artist/create">
+          <Button @click="onCreate">
             <Icon name="plus" />
             Create Artist
           </Button>
@@ -43,7 +42,7 @@ const addArtist = async ({ artistId }: { artistId: string }) => {
             v-for="artist in data.data"
             v-bind:key="artist.artistId"
             class="py-2"
-            @click="addArtist({ artistId: artist.artistId })">
+            @click="onSelect({ artistId: artist.artistId })">
             <h3>{{ artist.artistName }}</h3>
           </div>
         </div>
