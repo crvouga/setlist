@@ -314,7 +314,7 @@ export const db: Db = {
       };
 
       const result = await query(
-        `INSERT INTO songs (song_id, creator_id, song_name) VALUES ('${row.song_id}', '${row.creator_id}', '${row.song_name}')`
+        `INSERT INTO songs (song_id, creator_id, song_name, artist_id) VALUES ('${row.song_id}', '${row.creator_id}', '${row.song_name}', '${row.artist_id}')`
       );
 
       if (result.type === "Err") {
@@ -387,8 +387,20 @@ export const db: Db = {
       }
       return Ok(null);
     },
-    async search() {
-      return Err("Database error! Missing logic");
+    async search(params) {
+      const result = await query<Artists>(`
+        SELECT * FROM artists WHERE artist_name LIKE '%${params.artistName}%'
+      `);
+      if (result.type === "Err") {
+        return result;
+      }
+      return Ok(
+        result.data.map((row) => ({
+          artistId: row.artist_id,
+          artistName: row.artist_name,
+          creatorId: row.creator_id,
+        }))
+      );
     },
   },
 

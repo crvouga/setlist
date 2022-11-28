@@ -90,7 +90,7 @@ export type Db = {
     }) => Promise<
       Result<
         string,
-        { artistName: string; artistId: string; creatorId: string }
+        { artistName: string; artistId: string; creatorId: string }[]
       >
     >;
   };

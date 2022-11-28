@@ -20,7 +20,7 @@ const create = async () => {
     artistName: name.value,
   };
 
-  const result = await $fetch("/api/artist", {
+  const result = await $fetch("/api/artist/create", {
     method: "POST",
     body,
   });

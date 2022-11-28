@@ -10,3 +10,8 @@ export const ArtistPostBody = z.object({
   artistName: ArtistName,
 });
 export type ArtistPostBody = z.infer<typeof ArtistPostBody>;
+
+export const ArtistGetQuery = z.object({
+  search: z.string(),
+});
+export type ArtistGetQuery = z.infer<typeof ArtistGetQuery>;

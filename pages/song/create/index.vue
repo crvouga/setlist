@@ -10,20 +10,26 @@ watch(name, () => {
   nameProblems.value = [];
 });
 
-const artistSearch = ref("");
-
 const problems = ref<string[]>([]);
 
 const router = useRouter();
 const { show } = useToast();
 
+const route = useRoute();
+
+const artistId = route.query.artistId;
+
 const create = async () => {
+  if (typeof artistId !== "string") {
+    return;
+  }
+
   problems.value = [];
   status.value = "Loading";
 
   const body: SongPostBody = {
     songName: name.value,
-    artistId: v4(),
+    artistId: artistId,
   };
 
   const result = await $fetch("/api/song/create", {
@@ -62,14 +68,15 @@ const create = async () => {
 
         <TextField
           label="Name"
-          placeholder="Song name"
           id="name"
           v-model="name"
           :problems="nameProblems" />
 
         <label for="artistSearch" class="form-label mt-3">Artist</label>
 
-        <NuxtLink to="/song/create/add-artist">
+        <NuxtLink
+          v-if="typeof artistId !== 'string'"
+          to="/song/create/add-artist">
           <div
             class="p-2 bg-white border rounded d-flex flex-row justify-content-between"
             id="artistSearch">
@@ -77,6 +84,11 @@ const create = async () => {
             <Icon class="text-black" name="chevron-right" />
           </div>
         </NuxtLink>
+        <div
+          v-else
+          class="p-2 bg-white border rounded d-flex flex-row justify-content-between">
+          {{ artistId }}
+        </div>
 
         <Problems class="mt-2" :problems="problems" />
 
