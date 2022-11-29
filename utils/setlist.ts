@@ -64,7 +64,7 @@ export type SetlistFindByAccountId = z.infer<typeof SetlistFindByAccountId>;
 
 export const SetlistItemPatchBody = z.object({
   setlistItemId: SetlistItemId,
-  ordering: z.number().int().positive(),
+  ordering: z.number().int().nonnegative(),
 });
 export type SetlistItemPatchBody = z.infer<typeof SetlistItemPatchBody>;
 
